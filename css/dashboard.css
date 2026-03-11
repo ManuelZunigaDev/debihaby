@@ -1659,3 +1659,80 @@ hr {
         flex-direction: column;
     }
 }
+
+/* ===================================================
+   SWEETALERT 2 CUSTOM STYLING (THEME AWARE)
+   =================================================== */
+
+/* Light Mode Customizations */
+.swal2-popup {
+    border-radius: var(--card-radius) !important;
+    padding: 2rem !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(255, 152, 0, 0.1) !important;
+}
+
+.swal2-title {
+    color: #1a1a2e !important;
+    font-size: 1.75rem !important;
+    margin-bottom: 0.5rem !important;
+    font-family: inherit !important;
+}
+
+.swal2-html-container {
+    color: #636e72 !important;
+    font-size: 1.05rem !important;
+    line-height: 1.6 !important;
+}
+
+.swal2-confirm {
+    border-radius: 50px !important;
+    padding: 0.8rem 2.5rem !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    box-shadow: 0 4px 15px rgba(255, 111, 0, 0.3) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s ease !important;
+}
+
+.swal2-confirm:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(255, 111, 0, 0.4) !important;
+}
+
+/* Dark Mode Overrides */
+[data-theme="dark"] .swal2-popup {
+    background: #181825 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="dark"] .swal2-title {
+    color: #eaeaf5 !important;
+}
+
+[data-theme="dark"] .swal2-html-container {
+    color: #a0a0b0 !important;
+}
+
+[data-theme="dark"] .swal2-icon.swal2-warning {
+    border-color: #F57C00 !important;
+    color: #F57C00 !important;
+}
+
+[data-theme="dark"] .swal2-icon.swal2-success {
+    border-color: #10b981 !important;
+    color: #10b981 !important;
+}
+
+[data-theme="dark"] .swal2-icon.swal2-error {
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+}
+
+[data-theme="dark"] .swal2-icon.swal2-info {
+    border-color: #3b82f6 !important;
+    color: #3b82f6 !important;
+}
