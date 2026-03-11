@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <a href="register.php" class="back-link">¿No tienes cuenta? Regístrate aquí</a>
-            <a href="index.html" class="back-link">← Volver al inicio</a>
+            <a href="index.php" class="back-link">← Volver al inicio</a>
         </div>
     </div>
 </body>
