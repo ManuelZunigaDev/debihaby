@@ -9,7 +9,7 @@ flowchart TD
     Accion -- Usuarios --> GestionU[Crear, Editar o <br> Eliminar Perfiles]
     Accion -- Contenido --> GestionC[Publicar Noticias, <br> Mitos o Lecciones]
     Accion -- Soporte --> GestionS[Responder Dudas <br> de Expertos]
-    GestionU --> ModificarBD[(Aplicar Cambios <br> en BD)]
+    GestionU --> ModificarBD[(Aplicar cambios en: <br> usuarios / lecciones / <br> preguntas_expertos)]
     GestionC --> ModificarBD
     GestionS --> ModificarBD
     ModificarBD --> Exito([Confirmación de <br> Acción Exitosa])

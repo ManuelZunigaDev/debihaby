@@ -6,10 +6,10 @@ Flujo que permite a los estudiantes realizar preguntas contables que serán resp
 flowchart TD
     Inicio([Sección de Expertos]) --> Pregunta[Redactar Nueva <br> Pregunta Contable]
     Pregunta --> Enviar[/Enviar Pregunta/]
-    Enviar --> BDPending[(Guardar Pregunta <br> como Pendiente en BD)]
+    Enviar --> BDPending[(Guardar en: preguntas_expertos <br> estado = pendiente)]
     BDPending --> AdminPanel[Panel de Administrador / <br> Docente]
     AdminPanel --> Responder[Redactar Respuesta]
-    Responder --> BDAnswered[(Actualizar Estado <br> de Pregunta a Respondida)]
+    Responder --> BDAnswered[(Actualizar: preguntas_expertos <br> estado = respondida)]
     BDAnswered --> Notificar[/Mostrar Respuesta <br> al Estudiante/]
 
     %% Estilo general tipo Visio/DIA

@@ -8,10 +8,10 @@ flowchart TD
     Dashboard --> Accion{¿Qué acción <br> realizará?}
 
     Accion -- Crear Ejercicio --> Formulacion[Redactar Caso Práctico <br> y Solución Esperada]
-    Formulacion --> CargaBD[(Guardar Ejercicio <br> en BD)]
+    Formulacion --> CargaBD[(Guardar en: ejercicios)]
     CargaBD --> Dashboard
 
-    Accion -- Consultar Alumnos --> Peticion[(Consulta del Grupo <br> y Estadísticas)]
+    Accion -- Consultar Alumnos --> Peticion[(Consultar: progreso <br> y estadisticas)]
     Peticion --> GenerarReporte[Procesar Calificaciones, <br> Puntos y Avance]
     GenerarReporte --> Desplegar[/Mostrar Tabla de <br> Desempeño Escolar/]
     Desplegar --> Dashboard

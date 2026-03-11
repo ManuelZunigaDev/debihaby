@@ -9,7 +9,7 @@ flowchart TD
     Desplegar --> Responder[/Seleccionar Respuestas/]
     Responder --> Evaluar[Validar Respuestas VS <br> Opciones Correctas]
     Evaluar --> Calculo[Cálculo de Resultados]
-    Calculo --> BD[(Actualizar Puntos, Nivel <br> y Progreso en BD)]
+    Calculo --> BD[(Actualizar: estadisticas <br> y progreso)]
     BD --> MostrarFeedback[/Mostrar Retroalimentación, <br> Puntuación Obtenida/]
     MostrarFeedback --> Fin([Fin de la Evaluación])
 

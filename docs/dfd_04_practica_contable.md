@@ -6,7 +6,7 @@ Es el algoritmo principal de funcionalidad práctica; asegura que cada asiento q
 flowchart TD
     Inicio([Panel de Casos Prácticos]) --> SeleccionarCaso[Elegir Ejercicio <br> Contable]
     SeleccionarCaso --> LeerProblema[/Lectura del Caso <br> y Montos/]
-    LeerProblema --> SeleccionarCuentas[Selección de Cuentas <br> del Catálogo]
+    LeerProblema --> SeleccionarCuentas[Selección de Cuentas <br> del catálogo_cuentas]
     SeleccionarCuentas --> AsignarMontos[/Ingreso de <br> Cargos y Abonos/]
     AsignarMontos --> ValidarPartida[Calcular total de <br> Cargos VS Abonos]
     ValidarPartida --> Cuadre{¿Suma Cargos <br> = <br> Suma Abonos?}
@@ -14,8 +14,8 @@ flowchart TD
     Cuadre -- No --> ErrorPartida[/Mostrar alerta <br> de descuadre <br> en póliza/]
     ErrorPartida --> SeleccionarCuentas
 
-    Cuadre -- Si --> RegistroExito[(Registrar Póliza <br> en Libro Diario)]
-    RegistroExito --> PaseMayor[(Pase automático <br> a Libro Mayor)]
+    Cuadre -- Si --> RegistroExito[(Registrar en: polizas)]
+    RegistroExito --> PaseMayor[(Insertar en: movimientos_diario)]
     PaseMayor --> Fin([Póliza completa])
 
     %% Estilo general tipo Visio/DIA

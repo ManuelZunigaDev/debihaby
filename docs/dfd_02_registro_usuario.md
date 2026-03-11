@@ -1,6 +1,6 @@
 #### Diagrama de flujo: Registro de Nuevo Usuario (Estudiante)
 
-Flujo para la creación de una cuenta en DebiHaby, incluyendo la validación de que el correo no esté duplicado en el sistema.
+Flujo para la creación de una cuenta en DebiHaby, incluyendo la validación de que el correo no esté duplicado en la tabla `usuarios`.
 
 ```mermaid
 flowchart TD
@@ -12,7 +12,7 @@ flowchart TD
     ConsultaCorreo --> Decision{¿El correo <br> ya está <br> registrado?}
     Decision -- Si --> Error[/El correo electrónico <br> ya está en uso/]
     Error --> Formulario
-    Decision -- No --> Registrar[(Guardar nuevo <br> Estudiante en BD)]
+    Decision -- No --> Registrar[(Guardar nuevo <br> registro en: usuarios)]
     Registrar --> Exito([Cuenta creada <br> exitosamente])
 
     %% Estilo general tipo Visio/DIA

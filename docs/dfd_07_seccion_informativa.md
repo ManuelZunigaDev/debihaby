@@ -5,8 +5,8 @@ Representa el flujo de consulta de material de apoyo secundario como actualidad 
 ```mermaid
 flowchart TD
     Inicio([Menú Principal]) --> Seleccionar{¿Qué sección <br> consultar?}
-    Seleccionar -- Noticias --> ConsultaNoticias[(Extraer Noticias <br> de BD)]
-    Seleccionar -- Mitos --> ConsultaMitos[(Extraer Mitos <br> de BD)]
+    Seleccionar -- Noticias --> ConsultaNoticias[(Extraer de: noticias)]
+    Seleccionar -- Mitos --> ConsultaMitos[(Extraer de: mitos)]
     ConsultaNoticias --> MostrarN[/Mostrar listado <br> de Actualidad/]
     ConsultaMitos --> MostrarM[/Mostrar listado <br> de Mitos y Realidades/]
     MostrarN --> Leer([Lectura de Artículo])
