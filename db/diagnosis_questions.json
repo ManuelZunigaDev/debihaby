@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "question": "¿Qué es un Activo en contabilidad?",
+        "options": [
+            "Deudas que tiene la empresa",
+            "Bienes y derechos que posee la empresa",
+            "Aportaciones de los socios",
+            "Gastos de luz y agua"
+        ],
+        "answer": 1,
+        "points": 10
+    },
+    {
+        "id": 2,
+        "question": "Si una empresa compra mercancía a crédito, ¿qué aumenta?",
+        "options": [
+            "Activo y Pasivo",
+            "Solo Activo",
+            "Solo Pasivo",
+            "Activo y Capital"
+        ],
+        "answer": 0,
+        "points": 15
+    },
+    {
+        "id": 3,
+        "question": "¿Cuál es la fórmula de la Ecuación Contable Básica?",
+        "options": [
+            "Activo = Pasivo - Capital",
+            "Pasivo = Activo + Capital",
+            "Activo = Pasivo + Capital",
+            "Capital = Pasivo + Activo"
+        ],
+        "answer": 2,
+        "points": 10
+    },
+    {
+        "id": 4,
+        "question": "¿En qué estado financiero se muestran los ingresos y gastos?",
+        "options": [
+            "Balance General",
+            "Estado de Resultados",
+            "Estado de Flujo de Efectivo",
+            "Libro Diario"
+        ],
+        "answer": 1,
+        "points": 15
+    }
+]

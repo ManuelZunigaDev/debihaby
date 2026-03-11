@@ -1,0 +1,20 @@
+{
+  "name": "DebiHaby - Aprende Jugando",
+  "short_name": "DebiHaby",
+  "start_url": "dashboard.php",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4e73df",
+  "icons": [
+    {
+      "src": "assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
