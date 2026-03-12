@@ -21,7 +21,26 @@ if (!$studentStats) {
 $learningPath = $dashboardController->getLearningPath($userId);
 $currentLesson = $dashboardController->getCurrentLesson($userId);
 $recentActivity = $dashboardController->getRecentActivity($userId);
-$courses = $dashboardController->getCourses($userId);
+
+// --- AUTO-FIX FOR MISSING TABLES ---
+try {
+    $courses = $dashboardController->getCourses($userId);
+} catch (PDOException $e) {
+    if (strpos($e->getMessage(), "courses' doesn't exist") !== false) {
+        // Table missing! Run migration automatically
+        $sql = file_get_contents('db/database.sql');
+        if ($sql) {
+            $pdo->exec($sql);
+            // Retry fetching after migration
+            $courses = $dashboardController->getCourses($userId);
+        } else {
+            die("Error: Missing db/database.sql for auto-migration.");
+        }
+    } else {
+        throw $e; // Re-throw if it's a different error
+    }
+}
+// -----------------------------------
 
 try {
     $stmt = $pdo->query("SELECT * FROM news ORDER BY created_at DESC LIMIT 5");
