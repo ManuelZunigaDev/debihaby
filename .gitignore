@@ -1,0 +1,22 @@
+# Exclude large or unnecessary folders
+debihaby/
+node_modules/
+vendor/
+
+# System and IDE files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temporary files
+*.log
+tmp/
+*.tmp
+error_log
+
+# Large data/context files
+contexto.txt
+test_db.php
+setup.php
