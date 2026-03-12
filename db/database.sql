@@ -2,7 +2,16 @@
 CREATE DATABASE IF NOT EXISTS debihaby_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE debihaby_db;
 
-CREATE TABLE IF NOT EXISTS users (
+-- --- CORE TABLES ---
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS user_progress;
+DROP TABLE IF EXISTS user_stats;
+DROP TABLE IF EXISTS lessons;
+DROP TABLE IF EXISTS courses;
+DROP TABLE IF EXISTS users;
+SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -13,7 +22,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS user_stats (
+CREATE TABLE user_stats (
     user_id INT PRIMARY KEY,
     points INT DEFAULT 0,
     level INT DEFAULT 1,
@@ -23,7 +32,7 @@ CREATE TABLE IF NOT EXISTS user_stats (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS courses (
+CREATE TABLE courses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     description TEXT,
@@ -33,7 +42,7 @@ CREATE TABLE IF NOT EXISTS courses (
     order_index INT DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS lessons (
+CREATE TABLE lessons (
     id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT,
     title VARCHAR(100) NOT NULL,
@@ -44,7 +53,7 @@ CREATE TABLE IF NOT EXISTS lessons (
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS user_progress (
+CREATE TABLE user_progress (
     user_id INT,
     lesson_id INT,
     status ENUM('locked', 'available', 'completed') DEFAULT 'locked',
