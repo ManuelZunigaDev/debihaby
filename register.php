@@ -23,8 +23,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $userId = $pdo->lastInsertId();
                 $stmt = $pdo->prepare("INSERT INTO user_stats (user_id, points, level) VALUES (?, 0, 1)");
                 $stmt->execute([$userId]);
-                $stmt = $pdo->prepare("INSERT INTO user_progress (user_id, lesson_id, status) VALUES (?, 1, 'available')");
-                $stmt->execute([$userId]);
+
+                // Dynamic lesson ID assignment with auto-fix
+                try {
+                    $stmt = $pdo->query("SELECT id FROM lessons ORDER BY order_index ASC, id ASC LIMIT 1");
+                    $firstLessonId = $stmt->fetchColumn();
+                    
+                    if (!$firstLessonId) {
+                        // Table exists but empty? Run migration
+                        $sql = file_get_contents('db/database.sql');
+                        if ($sql) $pdo->exec($sql);
+                        $firstLessonId = $pdo->query("SELECT id FROM lessons ORDER BY order_index ASC, id ASC LIMIT 1")->fetchColumn();
+                    }
+
+                    if ($firstLessonId) {
+                        $stmt = $pdo->prepare("INSERT INTO user_progress (user_id, lesson_id, status) VALUES (?, ?, 'available')");
+                        $stmt->execute([$userId, $firstLessonId]);
+                    }
+                } catch (PDOException $e) {
+                    // If error is missing table, run migration
+                    if (strpos($e->getMessage(), "lessons' doesn't exist") !== false || strpos($e->getMessage(), "courses' doesn't exist") !== false) {
+                        $sql = file_get_contents('db/database.sql');
+                        if ($sql) {
+                            $pdo->exec($sql);
+                            $firstLessonId = $pdo->query("SELECT id FROM lessons ORDER BY order_index ASC, id ASC LIMIT 1")->fetchColumn();
+                            if ($firstLessonId) {
+                                $stmt = $pdo->prepare("INSERT INTO user_progress (user_id, lesson_id, status) VALUES (?, ?, 'available')");
+                                $stmt->execute([$userId, $firstLessonId]);
+                            }
+                        }
+                    } else {
+                        throw $e;
+                    }
+                }
 
                 $_SESSION['user_id'] = $userId;
                 $_SESSION['username'] = $username;
