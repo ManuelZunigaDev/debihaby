@@ -74,82 +74,46 @@ INSERT INTO user_stats (user_id, points, level, experience, streak) VALUES
 (2, 5000, 5, 0, 0),
 (3, 3200, 4, 1200, 7);
 
--- Lessons (5 originales + 3 nuevas)
+-- Lessons (Expanded to 15 lessons)
 INSERT INTO lessons (title, description, category, order_index, xp_reward, icon_class) VALUES 
 ('¿Qué es un Activo?', 'Conceptos básicos de los bienes de la empresa.', 'Activos', 1, 100, 'fa-coins'),
 ('Activo Circulante', 'Bienes de alta disponibilidad: efectivo, inventario, cuentas por cobrar.', 'Activos', 2, 120, 'fa-wallet'),
 ('Activo Fijo', 'Bienes de uso permanente: maquinaria, edificios, vehículos.', 'Activos', 3, 120, 'fa-building'),
-('¿Qué es un Pasivo?', 'Las obligaciones y deudas del negocio con terceros.', 'Pasivos', 4, 100, 'fa-file-invoice-dollar'),
-('El Capital Contable', 'Patrimonio neto de los dueños: activo menos pasivo.', 'Capital', 5, 150, 'fa-vault'),
-('La Ecuación Contable', 'El balance fundamental: Activo = Pasivo + Capital.', 'General', 6, 130, 'fa-scale-balanced'),
-('Ingresos y Gastos', 'Cómo se generan las utilidades y pérdidas de un negocio.', 'Estados Financieros', 7, 140, 'fa-chart-line'),
-('El Balance General', 'El estado financiero más importante: fotografía del negocio.', 'Estados Financieros', 8, 160, 'fa-table-columns');
+('Activo Diferido', 'Gastos pagados por anticipado que generan beneficios futuros.', 'Activos', 4, 120, 'fa-clock-rotate-left'),
+('¿Qué es un Pasivo?', 'Las obligaciones y deudas del negocio con terceros.', 'Pasivos', 5, 100, 'fa-file-invoice-dollar'),
+('Pasivo a Corto Plazo', 'Deudas que deben pagarse en menos de un año.', 'Pasivos', 6, 120, 'fa-calendar-day'),
+('Pasivo a Largo Plazo', 'Obligaciones con vencimiento mayor a un año.', 'Pasivos', 7, 120, 'fa-calendar-check'),
+('El Capital Contable', 'Patrimonio neto de los dueños: activo menos pasivo.', 'Capital', 8, 150, 'fa-vault'),
+('Capital Social', 'Aportaciones iniciales y adicionales de los socios.', 'Capital', 9, 130, 'fa-users-gear'),
+('La Ecuación Contable', 'El balance fundamental: Activo = Pasivo + Capital.', 'General', 10, 130, 'fa-scale-balanced'),
+('Partida Doble', 'El principio de que a todo cargo corresponde un abono.', 'General', 11, 140, 'fa-plus-minus'),
+('Ingresos y Gastos', 'Cómo se generan las utilidades y pérdidas de un negocio.', 'Estados Financieros', 12, 140, 'fa-chart-line'),
+('El Balance General', 'El estado financiero más importante: fotografía del negocio.', 'Estados Financieros', 13, 160, 'fa-table-columns'),
+('Estado de Resultados', 'Muestra la utilidad o pérdida neta de un periodo.', 'Estados Financieros', 14, 160, 'fa-file-lines'),
+('Cierre Contable', 'Proceso de finalización de un ciclo contable.', 'General', 15, 200, 'fa-flag-checkered');
 
--- Initial Progress for Test User (usuario ve la primera lección disponible)
-INSERT INTO user_progress (user_id, lesson_id, status) VALUES 
-(1, 1, 'available'),
-(1, 2, 'locked'),
-(1, 3, 'locked'),
-(1, 4, 'locked'),
-(1, 5, 'locked'),
-(1, 6, 'locked'),
-(1, 7, 'locked'),
-(1, 8, 'locked');
+-- ... (Progress logic would update accordingly when a user starts)
 
--- Initial Progress for berny_m (most completed to show ranking)
-INSERT INTO user_progress (user_id, lesson_id, status, score) VALUES 
-(3, 1, 'completed', 95),
-(3, 2, 'completed', 88),
-(3, 3, 'completed', 92),
-(3, 4, 'available', 0),
-(3, 5, 'locked', 0),
-(3, 6, 'locked', 0),
-(3, 7, 'locked', 0),
-(3, 8, 'locked', 0);
-
--- Additional tables for Expert Panel, News and Myths
-CREATE TABLE IF NOT EXISTS expert_questions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    question TEXT NOT NULL,
-    answer TEXT,
-    status ENUM('pending', 'answered') DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS news (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(200) NOT NULL,
-    content TEXT NOT NULL,
-    category VARCHAR(50),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS myths (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    myth TEXT NOT NULL,
-    reality TEXT NOT NULL,
-    explanation TEXT
-);
-
--- 8 mitos bien documentados
+-- Myths (Expanded)
 INSERT INTO myths (myth, reality, explanation) VALUES 
-('La contabilidad es solo matemáticas difíciles', 'Es lógica, orden y pensamiento crítico', 'La contabilidad usa operaciones básicas: suma, resta, multiplicación y división. Lo que realmente importa es entender los conceptos y el flujo del dinero, no ser un genio matemático.'),
-('Solo las grandes empresas necesitan contabilidad', 'Toda entidad económica la requiere', 'Desde un pequeño negocio familiar hasta un vendedor ambulante se benefician enormemente de llevar sus cuentas. Las finanzas personales también son contabilidad aplicada a tu vida diaria.'),
-('Los contadores solo hacen declaraciones de impuestos', 'Los contadores son asesores estratégicos clave', 'Los contadores modernos analizan datos financieros, detectan oportunidades de ahorro, ayudan en la toma de decisiones de inversión y contribuyen directamente al crecimiento de las empresas.'),
-('La contabilidad es un trabajo aburrido y repetitivo', 'Es una carrera dinámica con enorme impacto', 'Con tecnología como la inteligencia artificial, ERPs y análisis de datos, la contabilidad actual es apasionante: los profesionales resuelven problemas complejos y trabajan en sectores de todo tipo.'),
-('Si una empresa tiene muchos activos, siempre es exitosa', 'El éxito depende de la liquidez y rentabilidad', 'Una empresa puede tener millones en activos fijos (edificios, maquinaria) pero estar en quiebra si no puede pagar sus deudas del mes. El flujo de efectivo y la rentabilidad son igualmente cruciales.'),
-('Las deudas siempre son malas en una empresa', 'El endeudamiento estratégico es una herramienta de crecimiento', 'Financiar inversiones mediante deuda puede multiplicar la capacidad productiva de una empresa. Las grandes corporaciones usan estratégicamente el apalancamiento financiero para crecer más rápido que con capital propio.'),
-('El balance general muestra cuánto dinero tiene la empresa', 'Muestra la situación patrimonial total, no solo el efectivo', 'El Balance General incluye todos los activos (no solo dinero), todas las deudas y el patrimonio de los dueños. Para ver el efectivo específicamente, se revisa el Estado de Flujo de Efectivo.'),
-('La contabilidad ya no importa con tantas apps de finanzas', 'Las apps se basan en principios contables que necesitas entender', 'Las aplicaciones de finanzas son herramientas, no sustitutos del conocimiento. Para interpretar correctamente los reportes que generan y tomar decisiones inteligentes, necesitas entender los principios contables fundamentales.');
+('La contabilidad es solo matemáticas difíciles', 'Es lógica, orden y pensamiento crítico', 'La contabilidad usa operaciones básicas. Lo que realmente importa es entender los conceptos y el flujo del dinero.'),
+('Solo las grandes empresas necesitan contabilidad', 'Toda entidad económica la requiere', 'Desde un pequeño negocio hasta tus finanzas personales se benefician de llevar cuentas claras.'),
+('Los contadores solo hacen declaraciones de impuestos', 'Son asesores estratégicos clave', 'Analizan datos financieros para ayudar en la toma de decisiones y el crecimiento empresarial.'),
+('La contabilidad es aburrida', 'Es dinámica y tiene enorme impacto', 'Resuelves problemas complejos y eres pieza clave en cualquier organización.'),
+('Más activos siempre significa más éxito', 'Depende de la liquidez y rentabilidad', 'Puedes tener muchos edificios pero no tener efectivo para pagar la nómina.'),
+('Las deudas siempre son malas', 'El endeudamiento estratégico ayuda a crecer', 'La deuda bien usada puede multiplicar la capacidad productiva.'),
+('El software reemplazará a los contadores', 'La IA es una herramienta, no un sustituto', 'Se necesita el juicio humano para interpretar datos y tomar decisiones complejas.'),
+('La contabilidad es solo para gente de negocios', 'Es una habilidad para la vida', 'Entender tus finanzas te da libertad y control sobre tu futuro.'),
+('Es necesario ser un experto en Excel', 'Excel es solo una herramienta facilitadora', 'Lo importante es conocer la técnica contable; la herramienta se aprende con la práctica.');
 
+-- News (Expanded)
 INSERT INTO news (title, content, category) VALUES 
-('Nuevas NIF 2026 en México', 'El CINIF actualizó las Normas de Información Financiera para 2026, con cambios en el reconocimiento de arrendamientos y activos intangibles. Se recomienda revisión de los contratos vigentes.', 'Fiscal'),
-('La contabilidad digital transforma a las PyMES', 'El uso de software contable en la nube creció un 240% entre las pequeñas empresas mexicanas. Herramientas como Aspel, ContPAQi y SAP Business One lideran el mercado.', 'Tecnología'),
-('DebiHaby: Aprende contabilidad jugando', '¡La plataforma educativa gamificada ya está disponible! Desarrollada por estudiantes del CBTis 171, combina lecciones interactivas con retos y recompensas para hacer el aprendizaje contable divertido.', 'Educación'),
-('SAT actualiza requisitos de facturación CFDI 4.0', 'A partir de 2025, todos los comprobantes fiscales deben emitirse bajo el estándar CFDI 4.0 con nuevos campos obligatorios de exportación y objeto de impuesto.', 'Fiscal'),
-('Inflación y contabilidad: cómo proteger tu patrimonio', 'Con tasas de inflación elevadas, los activos fijos pueden estar subvalorados en los libros contables. El revalúo de activos y los ajustes por inflación son herramientas esenciales para reflejar la realidad económica.', 'Economía');
+('Nuevas NIF 2026', 'Actualización de las Normas de Información Financiera para finales de año.', 'Fiscal'),
+('IA en la Contabilidad', 'Cómo la inteligencia artificial está automatizando el registro de pólizas.', 'Tecnología'),
+('DebiHaby v2.0', 'Lanzamiento de la nueva versión con ruta de aprendizaje personalizada.', 'Educación'),
+('Reformas Fiscales 2025', 'Lo que debes saber sobre los nuevos impuestos digitales.', 'Fiscal'),
+('Emprendimiento y Finanzas', '5 consejos para llevar la contabilidad de tu primera startup.', 'Economía'),
+('Criptoactivos en el Balance', '¿Cómo se deben registrar las criptomonedas en la contabilidad formal?', 'Tecnología');
 
 INSERT INTO expert_questions (user_id, question, answer, status) VALUES 
 (1, '¿Qué es el IVA?', 'El Impuesto al Valor Agregado (IVA) es un impuesto indirecto sobre el consumo de bienes y servicios. En México la tasa general es del 16% y del 8% en zona fronteriza. Lo paga el consumidor final pero lo recauda el vendedor para entregarlo al SAT.', 'answered'),

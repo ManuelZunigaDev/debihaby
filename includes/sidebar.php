@@ -5,27 +5,22 @@
         <span>DebiHaby</span>
     </div>
     <nav class="sidebar-nav">
-        <!-- Dashboard Link -->
         <a href="javascript:void(0)" onclick="switchTab('dashboard')" class="nav-item active">
             <span class="icon"><i class="fas fa-th-large"></i></span> Dashboard
         </a>
         
-        <!-- Courses Link -->
-        <a href="javascript:void(0)" onclick="switchTab('dashboard')" class="nav-item">
+        <a href="javascript:void(0)" onclick="switchTab('courses')" class="nav-item">
             <span class="icon"><i class="fas fa-graduation-cap"></i></span> Mis Cursos
         </a>
         
-        <!-- Achievements Link -->
         <a href="javascript:void(0)" onclick="switchTab('certification')" class="nav-item">
             <span class="icon"><i class="fas fa-medal"></i></span> Logros
         </a>
         
-        <!-- Stats Link -->
         <a href="javascript:void(0)" onclick="switchTab('stats')" class="nav-item">
             <span class="icon"><i class="fas fa-chart-bar"></i></span> Estadísticas
         </a>
 
-        <!-- New Modules -->
         <div class="nav-divider"></div>
         <p class="nav-section-title">Aprende Más</p>
 

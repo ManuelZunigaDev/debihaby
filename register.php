@@ -2,33 +2,27 @@
 session_start();
 require_once 'includes/config.php';
 
-$error = '';
-$success = '';
+$errorMessage = '';
+$isSuccess    = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $full_name = $_POST['full_name'] ?? '';
+    $username = trim($_POST['username'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
+    $fullName = trim($_POST['full_name'] ?? '');
     $password = $_POST['password'] ?? '';
-    $age = !empty($_POST['age']) ? (int)$_POST['age'] : null;
-    $academic_level = $_POST['academic_level'] ?? '';
 
-    if (!empty($username) && !empty($email) && !empty($password)) {
-        // Check if exists
+    if (!empty($username) && !empty($email) && !empty($password) && !empty($fullName)) {
         $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
         $stmt->execute([$username, $email]);
         if ($stmt->fetch()) {
-            $error = 'El usuario o email ya están registrados.';
+            $errorMessage = 'El usuario o email ya están registrados.';
         } else {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, full_name, age, academic_level) VALUES (?, ?, ?, ?, ?, ?)");
-            if ($stmt->execute([$username, $email, $hashedPassword, $full_name, $age, $academic_level])) {
+            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, full_name, role) VALUES (?, ?, ?, ?, 'student')");
+            if ($stmt->execute([$username, $email, $hashedPassword, $fullName])) {
                 $userId = $pdo->lastInsertId();
-                // Initialize stats
-                $stmt = $pdo->prepare("INSERT INTO user_stats (user_id) VALUES (?)");
+                $stmt = $pdo->prepare("INSERT INTO user_stats (user_id, points, level) VALUES (?, 0, 1)");
                 $stmt->execute([$userId]);
-                
-                // Initialize first lesson
                 $stmt = $pdo->prepare("INSERT INTO user_progress (user_id, lesson_id, status) VALUES (?, 1, 'available')");
                 $stmt->execute([$userId]);
 
@@ -37,11 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: dashboard.php');
                 exit;
             } else {
-                $error = 'Error al registrar al usuario.';
+                $errorMessage = 'Error al registrar al usuario.';
             }
         }
     } else {
-        $error = 'Por favor, completa todos los campos.';
+        $errorMessage = 'Por favor, completa todos los campos obligatorios.';
     }
 }
 ?>
@@ -50,67 +44,149 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro - DebiHaby</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Crear Cuenta - DebiHaby</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/login-register.css">
 </head>
-<body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <img src="assets/logo.png" alt="DebiHaby Logo">
-                <h2>Crea tu cuenta</h2>
-                <p>Únete a la aventura contable</p>
+<body class="auth-body">
+    <div class="auth-wrapper">
+        <div class="auth-panel auth-panel--left">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="auth-brand">
+                <img src="assets/logo.png" alt="DebiHaby" class="auth-logo">
+                <h1 class="auth-brand-title">DebiHaby</h1>
+                <p class="auth-brand-subtitle">Únete a miles de estudiantes que ya dominan la contabilidad de forma divertida e interactiva.</p>
             </div>
+            <div class="auth-features">
+                <div class="auth-feature-item">
+                    <span class="auth-feature-icon"><i class="fas fa-rocket"></i></span>
+                    <span>Comienza desde cero, sin experiencia previa</span>
+                </div>
+                <div class="auth-feature-item">
+                    <span class="auth-feature-icon"><i class="fas fa-medal"></i></span>
+                    <span>Gana medallas y desbloquea logros</span>
+                </div>
+                <div class="auth-feature-item">
+                    <span class="auth-feature-icon"><i class="fas fa-brain"></i></span>
+                    <span>Aprende con el método de las 5Es</span>
+                </div>
+            </div>
+        </div>
 
-            <?php if ($error): ?>
-                <div class="error-msg"><?php echo $error; ?></div>
-            <?php endif; ?>
+        <div class="auth-panel auth-panel--right">
+            <div class="auth-form-wrapper">
+                <div class="auth-form-header">
+                    <h2>Crea tu cuenta</h2>
+                    <p>Es gratis. Empieza a aprender hoy</p>
+                </div>
 
-            <?php if ($success): ?>
-                <div class="success-msg" style="background: #e8f5e9; color: #2e7d32; padding: 0.8rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
-                    <?php echo $success; ?>
-                </div>
-            <?php endif; ?>
-
-            <form action="register.php" method="POST">
-                <div class="form-group">
-                    <label for="full_name">Nombre Completo</label>
-                    <input type="text" id="full_name" name="full_name" placeholder="Ej. Juan Pérez" required>
-                </div>
-                <div class="form-group">
-                    <label for="username">Usuario</label>
-                    <input type="text" id="username" name="username" placeholder="Tu nombre artístico" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Correo Electrónico</label>
-                    <input type="email" id="email" name="email" placeholder="correo@ejemplo.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" id="password" name="password" placeholder="••••••••" required>
-                </div>
-                <div style="display: flex; gap: 1rem;">
-                    <div class="form-group" style="flex: 1;">
-                        <label for="age">Edad</label>
-                        <input type="number" id="age" name="age" placeholder="20" min="10">
+                <?php if ($errorMessage): ?>
+                    <div class="auth-alert auth-alert--error">
+                        <i class="fas fa-circle-exclamation"></i>
+                        <span><?php echo htmlspecialchars($errorMessage); ?></span>
                     </div>
-                    <div class="form-group" style="flex: 2;">
-                        <label for="academic_level">Nivel Académico</label>
-                        <select id="academic_level" name="academic_level" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #ddd;">
-                            <option value="Bachillerato">Bachillerato</option>
-                            <option value="Licenciatura">Licenciatura</option>
-                            <option value="Profesional">Profesional</option>
-                            <option value="Otro">Otro</option>
-                        </select>
-                    </div>
-                </div>
-                <button type="submit" class="login-btn">Empezar a Aprender</button>
-            </form>
+                <?php endif; ?>
 
-            <a href="login.php" class="back-link">¿Ya tienes cuenta? Inicia Sesión</a>
+                <form action="register.php" method="POST" class="auth-form" novalidate>
+                    <div class="auth-field">
+                        <span class="auth-field-icon"><i class="fas fa-id-card"></i></span>
+                        <input type="text" id="full_name" name="full_name" placeholder="Nombre completo" required autocomplete="name" value="<?php echo htmlspecialchars($fullName ?? ''); ?>">
+                        <label for="full_name">Nombre completo</label>
+                    </div>
+
+                    <div class="auth-field">
+                        <span class="auth-field-icon"><i class="fas fa-user"></i></span>
+                        <input type="text" id="username" name="username" placeholder="Usuario" required autocomplete="username" value="<?php echo htmlspecialchars($username ?? ''); ?>">
+                        <label for="username">Usuario</label>
+                    </div>
+
+                    <div class="auth-field">
+                        <span class="auth-field-icon"><i class="fas fa-envelope"></i></span>
+                        <input type="email" id="email" name="email" placeholder="Correo electrónico" required autocomplete="email" value="<?php echo htmlspecialchars($email ?? ''); ?>">
+                        <label for="email">Correo electrónico</label>
+                    </div>
+
+                    <div class="auth-field">
+                        <span class="auth-field-icon"><i class="fas fa-lock"></i></span>
+                        <input type="password" id="password" name="password" placeholder="Contraseña" required autocomplete="new-password">
+                        <label for="password">Contraseña</label>
+                        <button type="button" class="toggle-password" aria-label="Mostrar contraseña" tabindex="-1">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <div class="password-strength" id="password-strength">
+                        <div class="strength-bar">
+                            <span id="strength-fill"></span>
+                        </div>
+                        <p id="strength-label">Escribe una contraseña</p>
+                    </div>
+
+                    <button type="submit" class="auth-submit-btn">
+                        <span>Empezar a Aprender</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <div class="auth-links">
+                    <a href="login.php" class="auth-link">¿Ya tienes cuenta? <strong>Inicia sesión</strong></a>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = btn.previousElementSibling;
+                const icon = btn.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'fas fa-eye-slash';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'fas fa-eye';
+                }
+            });
+        });
+
+        const passwordInput = document.getElementById('password');
+        const strengthFill  = document.getElementById('strength-fill');
+        const strengthLabel = document.getElementById('strength-label');
+
+        passwordInput.addEventListener('input', () => {
+            const val = passwordInput.value;
+            let score = 0;
+            if (val.length >= 8) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const levels = [
+                { label: 'Muy débil', color: '#ef4444', width: '15%' },
+                { label: 'Débil',     color: '#f97316', width: '35%' },
+                { label: 'Regular',   color: '#eab308', width: '60%' },
+                { label: 'Fuerte',    color: '#22c55e', width: '85%' },
+                { label: 'Muy fuerte', color: '#16a34a', width: '100%' },
+            ];
+
+            if (val.length === 0) {
+                strengthFill.style.width = '0';
+                strengthLabel.textContent = 'Escribe una contraseña';
+                return;
+            }
+
+            const level = levels[Math.min(score, 4)];
+            strengthFill.style.width  = level.width;
+            strengthFill.style.background = level.color;
+            strengthLabel.textContent = level.label;
+            strengthLabel.style.color = level.color;
+        });
+    </script>
 </body>
 </html>

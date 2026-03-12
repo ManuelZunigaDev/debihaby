@@ -3,288 +3,120 @@
         "title": "¿Qué es un Activo?",
         "category": "Activos",
         "steps": {
-            "enganche": {
-                "type": "video",
-                "content": "¿Alguna vez te has preguntado qué hace rica a una empresa? Todo empieza por lo que poseen. Mira este corto video para descubrir el concepto de 'Activo'.",
-                "video_url": "https://www.youtube.com/embed/5kO1t-Iab6k?si=hC6l55X_G-35B1U1"
-            },
-            "exploracion": {
-                "type": "scenario",
-                "content": "¿Qué tienen en común tu teléfono móvil, la computadora que estás usando y el dinero en tu cartera? Todos son cosas que te pertenecen y que tienen un valor económico. ¡Felicidades, acabas de identificar tus primeros activos personales! En una empresa funciona igual, pero a mayor escala."
-            },
-            "explicacion": {
-                "type": "theory",
-                "content": "En contabilidad, un **Activo** es un recurso controlado por la empresa como resultado de eventos pasados, del cual se espera obtener beneficios económicos en el futuro.\n\nEn palabras simples: **Es todo lo que la empresa TIENE o le DEBEN.**\nEjemplos clave:\n- Dinero en caja o bancos 💵\n- Mercancía para vender (Inventario) 📦\n- Muebles y computadoras 💻\n- Vehículos 🚚\n- Cuentas por cobrar (lo que los clientes nos deben) 📝"
-            },
-            "elaboracion": {
-                "type": "practice",
-                "content": "Imagina que abres un puesto de limonadas. Compras limones, azúcar, vasos y una mesa. Además, tienes $500 pesos en la caja registradora para dar cambio. Todos estos elementos, porque son tuyos y los usas para generar ganancias (vender limonadas), son tus **Activos**."
-            },
-            "evaluacion": {
-                "type": "drag_drop",
-                "content": "¡Es hora de poner a prueba lo que aprendiste! Arrastra SÓLO los elementos que son **Activos** hacia el 'Cofre de Activos'. ¡Cuidado con no meter deudas (Pasivos)!",
-                "items": [
-                    {"text": "Dinero en Efectivo (Caja)", "type": "activo"},
-                    {"text": "Préstamo del Banco (Deuda)", "type": "pasivo"},
-                    {"text": "Computadoras", "type": "activo"},
-                    {"text": "Hipoteca por Pagar", "type": "pasivo"},
-                    {"text": "Inventario de Mercancía", "type": "activo"},
-                    {"text": "Impuestos por Pagar", "type": "pasivo"},
-                    {"text": "Cuentas por Cobrar (Clientes)", "type": "activo"}
-                ]
-            }
+            "explicacion": { "type": "theory", "content": "Un Activo es un recurso controlado por la empresa que generará beneficios futuros. Es todo lo que la empresa TIENE o le DEBEN." },
+            "evaluacion": { "type": "drag_drop", "content": "Arrastra los Activos al cofre.", "items": [{"text": "Efectivo", "type": "activo"}, {"text": "Deuda Bancaria", "type": "pasivo"}, {"text": "Mercancía", "type": "activo"}] }
         }
     },
     "2": {
         "title": "Activo Circulante",
         "category": "Activos",
         "steps": {
-            "enganche": {
-                "type": "video",
-                "content": "¿Sabes cuál es la diferencia entre el dinero que tienes en tu cartera hoy y un terreno que compraste hace 10 años? La velocidad con la que puedes convertirlos en efectivo. Descubre qué es el Activo Circulante.",
-                "video_url": "https://www.youtube.com/embed/EAGkI0QVAo0?si=_mOk7EuKVQ_7K8p8"
-            },
-            "exploracion": {
-                "type": "scenario",
-                "content": "Imagina que eres dueño de una tienda de abarrotes. Tienes efectivo en la caja, productos en los estantes que planeas vender esta semana, y algunas cuentas que tus clientes frecuentes te pagarán en los próximos días. Todos esos recursos son tu 'dinero rápido': se convertirán en efectivo antes de que termine el año. A esto le llamamos **Activo Circulante**."
-            },
-            "explicacion": {
-                "type": "theory",
-                "content": "El **Activo Circulante** (también llamado Activo Corriente) está conformado por los bienes y derechos que la empresa puede convertir en efectivo en un período menor a **un año**.\n\nSus principales componentes son:\n- **Caja y Bancos**: Dinero disponible de inmediato 💰\n- **Cuentas por Cobrar**: Lo que los clientes nos deben y pagarán pronto 📋\n- **Inventarios**: Mercancía lista para vender 📦\n- **Inversiones a Corto Plazo**: Valores que se pueden liquidar rápido 📈\n\nRecuerda la fórmula: **Liquidez = velocidad para convertir activos en dinero.**"
-            },
-            "elaboracion": {
-                "type": "practice",
-                "content": "La empresa 'Papelería La Estrella' tiene lo siguiente al 31 de diciembre:\n- Efectivo en caja: $8,500\n- Saldo en cuenta bancaria: $22,000\n- Clientes que pagarán en enero: $15,000\n- Inventario de cuadernos y lápices: $9,000\n- Terreno de la empresa: $150,000 (¡ojo, este NO es circulante!)\n\n**Calcula el Total de Activo Circulante:**\n$8,500 + $22,000 + $15,000 + $9,000 = **$54,500**\nEl terreno queda fuera porque no se puede vender rápidamente."
-            },
-            "evaluacion": {
-                "type": "drag_drop",
-                "content": "¡Identifica los Activos Circulantes! Arrastra SOLO los que se pueden convertir en efectivo en menos de un año.",
-                "items": [
-                    {"text": "Efectivo en Caja", "type": "activo"},
-                    {"text": "Maquinaria Industrial", "type": "pasivo"},
-                    {"text": "Cuentas por Cobrar", "type": "activo"},
-                    {"text": "Edificio de la Empresa", "type": "pasivo"},
-                    {"text": "Inventario de Productos", "type": "activo"},
-                    {"text": "Préstamo a Largo Plazo", "type": "pasivo"},
-                    {"text": "Saldo en Banco", "type": "activo"}
-                ]
-            }
+            "explicacion": { "type": "theory", "content": "Son los bienes que se pueden convertir en efectivo en menos de un año. Incluye Caja, Bancos, Clientes e Inventarios." },
+            "evaluacion": { "type": "drag_drop", "content": "Identifica los circulantes.", "items": [{"text": "Dinero en Caja", "type": "activo"}, {"text": "Edificio", "type": "pasivo"}] }
         }
     },
     "3": {
         "title": "Activo Fijo",
         "category": "Activos",
         "steps": {
-            "enganche": {
-                "type": "video",
-                "content": "Las grandes empresas invierten en edificios, maquinaria y vehículos. Estos bienes son la columna vertebral de una empresa y no se venden fácilmente. Conoce el Activo Fijo.",
-                "video_url": "https://www.youtube.com/embed/Hc0jD3-xW2s?si=T_uVW-4UyJV9LlUF"
-            },
-            "exploracion": {
-                "type": "scenario",
-                "content": "Una fábrica de muebles compra una máquina cortadora de madera de $500,000 para producir sus productos durante los próximos 10 años. También tiene un edificio propio donde opera. Ninguno de estos bienes se vende en el corto plazo: son herramientas permanentes para generar ingresos. Estos recursos de largo plazo son el **Activo Fijo** de la empresa."
-            },
-            "explicacion": {
-                "type": "theory",
-                "content": "El **Activo Fijo** (o Activo No Corriente) son los bienes duraderos que la empresa utiliza para operar y que **no están destinados a la venta**, con una vida útil mayor a un año.\n\nSe dividen en:\n- **Tangibles**: Los que se pueden tocar y ver físicamente\n  - Terrenos 🏝️ (no se deprecian)\n  - Edificios 🏢\n  - Maquinaria y equipo ⚙️\n  - Vehículos 🚛\n  - Mobiliario y equipo de cómputo 🖥️\n- **Intangibles**: No tienen forma física pero tienen valor\n  - Patentes, marcas registradas, software 💡\n\n**Depreciación**: Los activos fijos (excepto terrenos) pierden valor con el tiempo. Este desgaste se registra como depreciación."
-            },
-            "elaboracion": {
-                "type": "practice",
-                "content": "La empresa 'Transportes del Norte' tiene los siguientes activos:\n- 3 camiones de carga: $1,200,000\n- Bodega propia: $800,000\n- Equipos de cómputo: $45,000\n- Terreno: $300,000\n- Marca registrada: $50,000\n\n**Total Activo Fijo: $2,395,000**\n\n**Depreciación ejemplo**: Si un camión cuesta $400,000 y su vida útil estimada es 10 años:\nDepreciación anual = $400,000 ÷ 10 = **$40,000 por año**\nEsto se registra como un gasto del ejercicio."
-            },
-            "evaluacion": {
-                "type": "drag_drop",
-                "content": "¡Clasifica los bienes! Arrastra SOLO los elementos que son **Activo Fijo** (bienes de largo plazo, no para venta inmediata).",
-                "items": [
-                    {"text": "Edificio de la Empresa", "type": "activo"},
-                    {"text": "Inventario de Ropa", "type": "pasivo"},
-                    {"text": "Maquinaria Industrial", "type": "activo"},
-                    {"text": "Efectivo en Caja", "type": "pasivo"},
-                    {"text": "Vehículos de Reparto", "type": "activo"},
-                    {"text": "Cuentas por Cobrar", "type": "pasivo"},
-                    {"text": "Terreno Propio", "type": "activo"}
-                ]
-            }
+            "explicacion": { "type": "theory", "content": "Bienes duraderos para operar la empresa, no para la venta. Terrenos, Edificios, Mobiliario." },
+            "evaluacion": { "type": "drag_drop", "content": "Busca los activos fijos.", "items": [{"text": "Camión de reparto", "type": "activo"}, {"text": "Papelería", "type": "pasivo"}] }
         }
     },
     "4": {
-        "title": "¿Qué es un Pasivo?",
-        "category": "Pasivos",
+        "title": "Activo Diferido",
+        "category": "Activos",
         "steps": {
-            "enganche": {
-                "type": "video",
-                "content": "Toda empresa tiene deudas. Conoce cómo se registran y clasifican las obligaciones de una empresa, llamadas Pasivos.",
-                "video_url": "https://www.youtube.com/embed/Qx2pOoM9Xn4?si=KBhcA7LzFHuNYj6g"
-            },
-            "exploracion": {
-                "type": "scenario",
-                "content": "Pedro abrió una cafetería. Para hacerlo, pidió un préstamo al banco de $80,000. También le debe $5,000 a su proveedor de café por la última entrega. Además, debe pagar la renta del local del mes próximo ($3,500) y tiene impuestos pendientes de $1,200. Todo lo que Pedro **debe** a terceros es el **Pasivo** de su negocio."
-            },
-            "explicacion": {
-                "type": "theory",
-                "content": "En contabilidad, un **Pasivo** es una obligación presente de la empresa, surgida de eventos pasados, cuya liquidación (pago) se espera que resulte en una salida de recursos económicos.\n\nEn palabras simples: **Es todo lo que la empresa DEBE o está obligada a pagar.**\n\n**Clasificación por plazo:**\n- **Pasivo Circulante (Corto Plazo)**: Deudas a pagar en menos de 1 año\n  - Proveedores 🏪\n  - Sueldos por pagar 👷\n  - IVA e impuestos 🧾\n  - Préstamos bancarios a corto plazo 🏦\n- **Pasivo Fijo (Largo Plazo)**: Deudas a pagar en más de 1 año\n  - Hipotecas 🏠\n  - Créditos a largo plazo 📜\n\n**Recuerda**: La ecuación contable es **Activo = Pasivo + Capital**"
-            },
-            "elaboracion": {
-                "type": "practice",
-                "content": "La empresa 'Muebles Modernos SA' tiene las siguientes obligaciones:\n- Deuda con proveedor de madera (pago en 30 días): $12,000\n- Renta del mes por pagar: $4,500\n- Préstamo hipotecario a 15 años: $350,000\n- IVA por pagar: $8,000\n- Sueldos de empleados de este mes: $25,000\n\n**Pasivo Circulante** (corto plazo): $12,000 + $4,500 + $8,000 + $25,000 = **$49,500**\n**Pasivo Fijo** (largo plazo): **$350,000**\n**Total Pasivo**: **$399,500**"
-            },
-            "evaluacion": {
-                "type": "drag_drop",
-                "content": "¡Identifica los Pasivos! Arrastra SOLO las obligaciones y deudas de la empresa hacia el cofre.",
-                "items": [
-                    {"text": "Préstamo Bancario", "type": "activo"},
-                    {"text": "Cuentas por Cobrar", "type": "pasivo"},
-                    {"text": "Proveedores por Pagar", "type": "activo"},
-                    {"text": "Inventario de Mercancía", "type": "pasivo"},
-                    {"text": "Sueldos por Pagar", "type": "activo"},
-                    {"text": "Efectivo en Banco", "type": "pasivo"},
-                    {"text": "IVA por Pagar al SAT", "type": "activo"}
-                ]
-            }
+            "explicacion": { "type": "theory", "content": "Pagos hechos por adelantado, como Rentas o Seguros pagados por anticipado." },
+            "evaluacion": { "type": "drag_drop", "content": "Selecciona el diferido.", "items": [{"text": "Seguro Pagado por Anticipado", "type": "activo"}, {"text": "Factura por Pagar", "type": "pasivo"}] }
         }
     },
     "5": {
-        "title": "El Capital Contable",
-        "category": "Capital",
+        "title": "¿Qué es un Pasivo?",
+        "category": "Pasivos",
         "steps": {
-            "enganche": {
-                "type": "video",
-                "content": "¿Cuánto vale realmente una empresa después de restar todas sus deudas? Eso es el Capital Contable, el valor real que pertenece a los dueños. ¡Descúbrelo!",
-                "video_url": "https://www.youtube.com/embed/OlvsBLIBLl8?si=kGc83uRBMcgH_Qr5"
-            },
-            "exploracion": {
-                "type": "scenario",
-                "content": "Roberto y Laura invierten $200,000 para fundar una empresa de diseño gráfico. Con ese dinero compran computadoras, mobiliario y pagan los primeros meses de renta. Al final del primer año, la empresa ganó $50,000 en utilidades. El valor que les pertenece a ellos como dueños —lo que invirtieron más lo que ganaron— es el **Capital Contable**."
-            },
-            "explicacion": {
-                "type": "theory",
-                "content": "El **Capital Contable** (también llamado Patrimonio o Equity) es el valor residual de los activos de la empresa una vez deducidos todos sus pasivos. Es la parte que **pertenece a los propietarios**.\n\n**Ecuación fundamental:**\n> **Capital = Activo − Pasivo**\n> O también: **Activo = Pasivo + Capital**\n\n**Componentes del Capital:**\n- **Capital Social**: Aportaciones de los socios 🤝\n- **Utilidades Retenidas**: Ganancias que no se repartieron y se reinvierten 📊\n- **Utilidad/Pérdida del Ejercicio**: Resultado del año actual 📈📉\n- **Reserva Legal**: Porcentaje obligatorio guardado por ley 🏛️"
-            },
-            "elaboracion": {
-                "type": "practice",
-                "content": "Calcula el Capital de la empresa 'Tech Solutions':\n\n**Activos:**\n- Equipo de cómputo: $180,000\n- Efectivo: $35,000\n- Cuentas por cobrar: $45,000\n- **Total Activo: $260,000**\n\n**Pasivos:**\n- Préstamo bancario: $80,000\n- Proveedores: $20,000\n- **Total Pasivo: $100,000**\n\n**Capital Contable = Activo − Pasivo**\n$260,000 - $100,000 = **$160,000**\n\nEse es el valor que realmente pertenece a los dueños de Tech Solutions."
-            },
-            "evaluacion": {
-                "type": "drag_drop",
-                "content": "¡Identifica los elementos del Capital Contable! Arrastra SOLO los componentes que forman el patrimonio de los dueños.",
-                "items": [
-                    {"text": "Capital Social Inicial", "type": "activo"},
-                    {"text": "Préstamo Hipotecario", "type": "pasivo"},
-                    {"text": "Utilidades Retenidas", "type": "activo"},
-                    {"text": "Proveedores por Pagar", "type": "pasivo"},
-                    {"text": "Utilidad del Ejercicio", "type": "activo"},
-                    {"text": "IVA por Pagar", "type": "pasivo"},
-                    {"text": "Reserva Legal", "type": "activo"}
-                ]
-            }
+            "explicacion": { "type": "theory", "content": "Las obligaciones y deudas del negocio con terceros (fuentes externas)." },
+            "evaluacion": { "type": "drag_drop", "content": "Arrastra las deudas.", "items": [{"text": "Préstamo Bancario", "type": "activo"}, {"text": "Venta Realizada", "type": "pasivo"}] }
         }
     },
     "6": {
-        "title": "La Ecuación Contable",
-        "category": "General",
+        "title": "Pasivo a Corto Plazo",
+        "category": "Pasivos",
         "steps": {
-            "enganche": {
-                "type": "video",
-                "content": "Toda la contabilidad se sostiene sobre una sola ecuación: Activo = Pasivo + Capital. Parece simple, pero cambia para siempre cómo verás las finanzas.",
-                "video_url": "https://www.youtube.com/embed/kPmE9w5MBq8?si=bL2tHmUb1EFC_Pdo"
-            },
-            "exploracion": {
-                "type": "scenario",
-                "content": "Ana compra una computadora portátil para su negocio de diseño. Paga $6,000 de su propio dinero y pide prestados $4,000 al banco. Si sumas: la computadora vale $10,000 (Activo). La deuda al banco es $4,000 (Pasivo). Lo que Ana aportó: $6,000 (Capital).\n\n**$10,000 = $4,000 + $6,000** ✅\n¡La ecuación contable siempre debe estar en equilibrio!"
-            },
-            "explicacion": {
-                "type": "theory",
-                "content": "La **Ecuación Contable Fundamental** es el pilar de toda la contabilidad:\n\n> **ACTIVO = PASIVO + CAPITAL**\n\nEsta ecuación SIEMPRE debe estar balanceada. Cada transacción económica afecta al menos a dos cuentas pero mantiene el equilibrio.\n\n**Ejemplos de transacciones:**\n- Comprar mercancía al contado: ↑ Inventario (Activo) / ↓ Efectivo (Activo)\n- Pedir un préstamo: ↑ Efectivo (Activo) / ↑ Préstamo (Pasivo)\n- Vender mercancía y cobrar: ↑ Efectivo (Activo) / ↑ Utilidad (Capital)\n- Pagar deuda con dinero: ↓ Efectivo (Activo) / ↓ Deuda (Pasivo)\n\n**La partida doble**: Cada movimiento siempre afecta dos o más cuentas, y el total siempre queda en equilibrio."
-            },
-            "elaboracion": {
-                "type": "practice",
-                "content": "Verifica la ecuación contable de esta empresa al inicio del año:\n\n**ACTIVOS:**\n- Caja: $5,000\n- Banco: $30,000\n- Inventario: $15,000\n- Maquinaria: $50,000\n- **TOTAL ACTIVO: $100,000**\n\n**PASIVOS:**\n- Proveedores: $10,000\n- Préstamo bancario: $40,000\n- **TOTAL PASIVO: $50,000**\n\n**CAPITAL:**\n- Capital social: $50,000\n- **TOTAL CAPITAL: $50,000**\n\n✅ $100,000 = $50,000 + $50,000 → **¡La ecuación está balanceada!**"
-            },
-            "evaluacion": {
-                "type": "drag_drop",
-                "content": "¡Identifica los componentes correctos! Arrastra los elementos que forman parte del ACTIVO hacia el cofre.",
-                "items": [
-                    {"text": "Efectivo en Caja", "type": "activo"},
-                    {"text": "Capital Social", "type": "pasivo"},
-                    {"text": "Inventario de Mercancía", "type": "activo"},
-                    {"text": "Utilidades Retenidas", "type": "pasivo"},
-                    {"text": "Equipo de Oficina", "type": "activo"},
-                    {"text": "Préstamo por Pagar", "type": "pasivo"},
-                    {"text": "Saldo en Banco", "type": "activo"}
-                ]
-            }
+            "explicacion": { "type": "theory", "content": "Deudas que deben pagarse en un periodo menor a un año, como Proveedores o impuestos." },
+            "evaluacion": { "type": "drag_drop", "content": "Busca deudas cercanas.", "items": [{"text": "Pago a Proveedor (30 días)", "type": "activo"}, {"text": "Hipoteca (10 años)", "type": "pasivo"}] }
         }
     },
     "7": {
-        "title": "Ingresos y Gastos",
-        "category": "Estados Financieros",
+        "title": "Pasivo a Largo Plazo",
+        "category": "Pasivos",
         "steps": {
-            "enganche": {
-                "type": "video",
-                "content": "¿En qué se diferencia vender un producto de comprar lo que necesitas para producirlo? Uno te hace crecer, el otro es el costo de hacerlo. Aprende sobre Ingresos y Gastos.",
-                "video_url": "https://www.youtube.com/embed/CRlSMhS3g9k?si=vPqKFgAEO2vhMPrM"
-            },
-            "exploracion": {
-                "type": "scenario",
-                "content": "Carlos tiene una panadería. En enero vendió $25,000 en panes y pasteles. Para producirlos, gastó $8,000 en harina y mantequilla, pagó $3,500 de luz y gas, y pagó $5,000 de sueldo a su ayudante. \n¿Cuánto ganó realmente Carlos? \nIngresos ($25,000) - Gastos ($16,500) = **Utilidad $8,500** 🎉\nEsta es la esencia del Estado de Resultados."
-            },
-            "explicacion": {
-                "type": "theory",
-                "content": "**Ingresos**: Son los recursos que la empresa obtiene por su actividad principal.\n- Ventas de productos o servicios 📦\n- Comisiones cobradas 💼\n- Intereses ganados 🏦\n\n**Gastos**: Son los costos necesarios para generar esos ingresos.\n- Costo de ventas (lo que costó producir)\n- Sueldos y salarios 👷\n- Renta del local 🏢\n- Servicios (luz, agua, internet) 💡\n- Depreciación de activos ⚙️\n\n**Fórmula de utilidad:**\n> **Utilidad = Ingresos − Gastos**\n\nSi Ingresos > Gastos → **Utilidad (Ganancia)** 📈\nSi Gastos > Ingresos → **Pérdida** 📉"
-            },
-            "elaboracion": {
-                "type": "practice",
-                "content": "Estado de Resultados simplificado de 'Boutique Elegance' — Enero:\n\n**INGRESOS:**\n- Ventas de ropa: $85,000\n- Descuentos sobre ventas: -$5,000\n- **Ingreso neto: $80,000**\n\n**GASTOS:**\n- Costo de la ropa vendida: $40,000\n- Sueldos: $12,000\n- Renta: $6,000\n- Publicidad: $2,000\n- Luz y agua: $800\n- **Total Gastos: $60,800**\n\n**UTILIDAD DEL MES: $80,000 - $60,800 = $19,200** ✅"
-            },
-            "evaluacion": {
-                "type": "drag_drop",
-                "content": "¡Clasifica correctamente! Arrastra los INGRESOS al cofre (deja fuera los gastos).",
-                "items": [
-                    {"text": "Ventas del Mes", "type": "activo"},
-                    {"text": "Pago de Renta", "type": "pasivo"},
-                    {"text": "Comisiones Cobradas", "type": "activo"},
-                    {"text": "Sueldo de Empleados", "type": "pasivo"},
-                    {"text": "Intereses Ganados en Banco", "type": "activo"},
-                    {"text": "Costo de Mercancía Vendida", "type": "pasivo"},
-                    {"text": "Servicio de Consultoría Cobrado", "type": "activo"}
-                ]
-            }
+            "explicacion": { "type": "theory", "content": "Obligaciones con vencimiento mayor a un año, como Hipotecas o créditos bancarios grandes." },
+            "evaluacion": { "type": "drag_drop", "content": "Identifica el largo plazo.", "items": [{"text": "Crédito Hipotecario", "type": "activo"}, {"text": "Luz por pagar", "type": "pasivo"}] }
         }
     },
     "8": {
+        "title": "El Capital Contable",
+        "category": "Capital",
+        "steps": {
+            "explicacion": { "type": "theory", "content": "Es el valor residual de los activos una vez deducidos los pasivos. Lo que realmente pertenece a los dueños." },
+            "evaluacion": { "type": "drag_drop", "content": "Busca el patrimonio.", "items": [{"text": "Utilidad neta", "type": "activo"}, {"text": "Cuentas por pagar", "type": "pasivo"}] }
+        }
+    },
+    "9": {
+        "title": "Capital Social",
+        "category": "Capital",
+        "steps": {
+            "explicacion": { "type": "theory", "content": "Son las aportaciones iniciales y adicionales hechas por los socios o dueños de la empresa." },
+            "evaluacion": { "type": "drag_drop", "content": "Arrastra las aportaciones.", "items": [{"text": "Aportación de socios", "type": "activo"}, {"text": "Gasto de luz", "type": "pasivo"}] }
+        }
+    },
+    "10": {
+        "title": "La Ecuación Contable",
+        "category": "General",
+        "steps": {
+            "explicacion": { "type": "theory", "content": "El equilibrio fundamental: Activo = Pasivo + Capital. Todo lo que tienes vino de una deuda o de tu dinero." },
+            "evaluacion": { "type": "drag_drop", "content": "¿Sigue el equilibrio?", "items": [{"text": "Activo = Pasivo + Capital", "type": "activo"}, {"text": "Activo = Pasivo - Capital", "type": "pasivo"}] }
+        }
+    },
+    "11": {
+        "title": "Partida Doble",
+        "category": "General",
+        "steps": {
+            "explicacion": { "type": "theory", "content": "A todo cargo corresponde un abono. Cada transacción afecta al menos dos cuentas para mantener el equilibrio." },
+            "evaluacion": { "type": "drag_drop", "content": "Aplica la partida doble.", "items": [{"text": "Un cargo y un abono", "type": "activo"}, {"text": "Solo un cargo", "type": "pasivo"}] }
+        }
+    },
+    "12": {
+        "title": "Ingresos y Gastos",
+        "category": "Estados Financieros",
+        "steps": {
+            "explicacion": { "type": "theory", "content": "Los ingresos son entradas por ventas; los gastos son salidas necesarias para operar. La resta es la utilidad." },
+            "evaluacion": { "type": "drag_drop", "content": "Busca la ganancia.", "items": [{"text": "Venta de servicios", "type": "activo"}, {"text": "Pago de nómina", "type": "pasivo"}] }
+        }
+    },
+    "13": {
         "title": "El Balance General",
         "category": "Estados Financieros",
         "steps": {
-            "enganche": {
-                "type": "video",
-                "content": "El Balance General es la fotografía financiera de una empresa en un momento exacto del tiempo. Muestra todo lo que tiene, lo que debe y lo que vale. ¡Es el documento más importante de la contabilidad!",
-                "video_url": "https://www.youtube.com/embed/OlvsBLIBLl8?si=kGc83uRBMcgH_Qr5"
-            },
-            "exploracion": {
-                "type": "scenario",
-                "content": "Imagina que tomas una foto de tu situación financiera personal ahora mismo: cuentas lo que tienes (dinero en cartera, cuenta de banco, tu teléfono, tu ropa), calculas lo que debes (deuda con amigos, crédito del teléfono) y lo que resta es tu patrimonio personal. Eso, a nivel empresarial, se llama **Balance General** y se elabora al cierre del mes o del año."
-            },
-            "explicacion": {
-                "type": "theory",
-                "content": "El **Balance General** (Situación Financiera) es un estado financiero que muestra la situación económica de una empresa en una **fecha específica**.\n\n**Estructura:**\n\n| ACTIVO | PASIVO + CAPITAL |\n|--------|------------------|\n| Activo Circulante | Pasivo Circulante |\n| Activo Fijo | Pasivo Fijo |\n| Activo Diferido | Capital Contable |\n| **TOTAL ACTIVO** | **TOTAL PAS + CAP** |\n\n**Regla de oro**: El total del lado izquierdo (Activo) **siempre** debe ser igual al total del lado derecho (Pasivo + Capital).\n\n**Fecha del Balance**: Siempre se indica una fecha puntual, por ejemplo: 'Al 31 de diciembre de 2025'."
-            },
-            "elaboracion": {
-                "type": "practice",
-                "content": "BALANCE GENERAL — 'Distribuidora Acevedo' al 31 de Diciembre de 2025\n\n**ACTIVO**\n- Circulante: Caja $8,000 | Banco $22,000 | Clientes $10,000 = $40,000\n- Fijo: Bodega $120,000 | Vehículos $60,000 = $180,000\n- **TOTAL ACTIVO: $220,000**\n\n**PASIVO**\n- Circulante: Proveedores $15,000 | Impuestos $5,000 = $20,000\n- Fijo: Préstamo a 5 años $50,000\n- **TOTAL PASIVO: $70,000**\n\n**CAPITAL**\n- Capital Social: $100,000\n- Utilidad del Ejercicio: $50,000\n- **TOTAL CAPITAL: $150,000**\n\n✅ $220,000 = $70,000 + $150,000 ← **¡El balance cuadra!**"
-            },
-            "evaluacion": {
-                "type": "drag_drop",
-                "content": "¡Arma el Balance! Arrastra solo los elementos que van en el lado del ACTIVO de un Balance General.",
-                "items": [
-                    {"text": "Caja y Bancos", "type": "activo"},
-                    {"text": "Proveedores por Pagar", "type": "pasivo"},
-                    {"text": "Inventario de Productos", "type": "activo"},
-                    {"text": "Capital Social", "type": "pasivo"},
-                    {"text": "Maquinaria y Equipo", "type": "activo"},
-                    {"text": "Utilidades del Ejercicio", "type": "pasivo"},
-                    {"text": "Cuentas por Cobrar", "type": "activo"}
-                ]
-            }
+            "explicacion": { "type": "theory", "content": "Estado financiero que muestra Activos, Pasivos y Capital a una fecha determinada. Es una foto de la empresa." },
+            "evaluacion": { "type": "drag_drop", "content": "Arma el balance.", "items": [{"text": "Activos y Pasivos", "type": "activo"}, {"text": "Solo gastos", "type": "pasivo"}] }
+        }
+    },
+    "14": {
+        "title": "Estado de Resultados",
+        "category": "Estados Financieros",
+        "steps": {
+            "explicacion": { "type": "theory", "content": "Reporte que muestra si la empresa ganó o perdió dinero en un periodo, restando gastos a los ingresos." },
+            "evaluacion": { "type": "drag_drop", "content": "Analiza resultados.", "items": [{"text": "Ingresos - Gastos", "type": "activo"}, {"text": "Activo + Pasivo", "type": "pasivo"}] }
+        }
+    },
+    "15": {
+        "title": "Cierre Contable",
+        "category": "General",
+        "steps": {
+            "explicacion": { "type": "theory", "content": "Proceso final del ciclo donde se cancelan cuentas temporales y se determina el resultado final para iniciar un nuevo año." },
+            "evaluacion": { "type": "drag_drop", "content": "Finaliza el ciclo.", "items": [{"text": "Cancelar saldos", "type": "activo"}, {"text": "Comprar camión", "type": "pasivo"}] }
         }
     }
 }
