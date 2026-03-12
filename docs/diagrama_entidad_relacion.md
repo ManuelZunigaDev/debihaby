@@ -117,7 +117,7 @@ flowchart LR
     %% ── RELACIONES ──
     E_USUARIOS -- "1:1" --- R_TIENE{Tiene}:::relation --- E_ESTADISTICAS
     E_USUARIOS -- "1:N" --- R_REALIZA{Realiza}:::relation --- E_PROGRESO
-    E_USUARIOS -- "1:N" --- R_HACE{Hace}:::relation --- E_PREGUNTAS
+    E_USUARIOS -- "1:N" --- R_HACE{Hace / Responde}:::relation --- E_PREGUNTAS
     E_USUARIOS -- "1:N" --- R_CREA{Crea}:::relation --- E_EJERCICIOS
     E_USUARIOS -- "1:N" --- R_RESPONDE{Responde}:::relation --- E_POLIZAS
     E_LECCIONES -- "1:N" --- R_INCLUYE{Incluye}:::relation --- E_PROGRESO

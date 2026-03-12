@@ -105,7 +105,7 @@ erDiagram
 
     USUARIOS ||--o{ EJERCICIOS : "crea (Docente)"
     USUARIOS ||--o{ POLIZAS : "resuelve (Estudiante)"
-    USUARIOS ||--o{ PREGUNTAS_EXPERTOS : "pregunta (Estudiante) / responde (Admin/Docente)"
+    USUARIOS ||--o{ PREGUNTAS_EXPERTOS : "pregunta (Estudiante) / responde (Docente)"
     EJERCICIOS ||--o{ POLIZAS : "contiene"
 
     POLIZAS ||--|{ MOVIMIENTOS_DIARIO : "se compone de"

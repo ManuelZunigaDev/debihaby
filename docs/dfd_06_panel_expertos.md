@@ -1,14 +1,14 @@
 #### Diagrama de flujo: Panel de Consulta a Expertos (Asesoría)
 
-Flujo que permite a los estudiantes realizar preguntas contables que serán respondidas por los administradores o docentes expertos.
+Flujo que permite a los estudiantes enviar preguntas contables, las cuales son atendidas por los **docentes de la especialidad** a través de su panel, garantizando asesoramiento especializado por parte de los profesores del plantel.
 
 ```mermaid
 flowchart TD
     Inicio([Sección de Expertos]) --> Pregunta[Redactar Nueva <br> Pregunta Contable]
     Pregunta --> Enviar[/Enviar Pregunta/]
     Enviar --> BDPending[(Guardar en: preguntas_expertos <br> estado = pendiente)]
-    BDPending --> AdminPanel[Panel de Administrador / <br> Docente]
-    AdminPanel --> Responder[Redactar Respuesta]
+    BDPending --> DocPanel[Panel del Docente <br> (o Administrador)]
+    DocPanel --> Responder[Docente redacta <br> Respuesta Especializada]
     Responder --> BDAnswered[(Actualizar: preguntas_expertos <br> estado = respondida)]
     BDAnswered --> Notificar[/Mostrar Respuesta <br> al Estudiante/]
 

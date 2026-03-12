@@ -10,8 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $full_name = $_POST['full_name'] ?? '';
     $password = $_POST['password'] ?? '';
-    $age = !empty($_POST['age']) ? (int)$_POST['age'] : null;
-    $academic_level = $_POST['academic_level'] ?? '';
 
     if (!empty($username) && !empty($email) && !empty($password)) {
         // Check if exists
@@ -21,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'El usuario o email ya están registrados.';
         } else {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, full_name, age, academic_level) VALUES (?, ?, ?, ?, ?, ?)");
-            if ($stmt->execute([$username, $email, $hashedPassword, $full_name, $age, $academic_level])) {
+            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, full_name) VALUES (?, ?, ?, ?)");
+            if ($stmt->execute([$username, $email, $hashedPassword, $full_name])) {
                 $userId = $pdo->lastInsertId();
                 // Initialize stats
                 $stmt = $pdo->prepare("INSERT INTO user_stats (user_id) VALUES (?)");
@@ -90,21 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-group">
                     <label for="password">Contraseña</label>
                     <input type="password" id="password" name="password" placeholder="••••••••" required>
-                </div>
-                <div style="display: flex; gap: 1rem;">
-                    <div class="form-group" style="flex: 1;">
-                        <label for="age">Edad</label>
-                        <input type="number" id="age" name="age" placeholder="20" min="10">
-                    </div>
-                    <div class="form-group" style="flex: 2;">
-                        <label for="academic_level">Nivel Académico</label>
-                        <select id="academic_level" name="academic_level" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #ddd;">
-                            <option value="Bachillerato">Bachillerato</option>
-                            <option value="Licenciatura">Licenciatura</option>
-                            <option value="Profesional">Profesional</option>
-                            <option value="Otro">Otro</option>
-                        </select>
-                    </div>
                 </div>
                 <button type="submit" class="login-btn">Empezar a Aprender</button>
             </form>
