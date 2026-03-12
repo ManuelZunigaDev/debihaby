@@ -5,12 +5,12 @@ require_once '../includes/config.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'No autenticado']);
+    echo json_encode(['success' => false, 'message' => 'No authenticated']);
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
     exit;
 }
 
@@ -18,7 +18,7 @@ $lessonId = (int)($_POST['lesson_id'] ?? 0);
 $userId   = (int)$_SESSION['user_id'];
 
 if ($lessonId <= 0) {
-    echo json_encode(['success' => false, 'message' => 'ID de lección inválido']);
+    echo json_encode(['success' => false, 'message' => 'Invalid lesson ID']);
     exit;
 }
 
@@ -27,7 +27,7 @@ $stmt->execute([$userId, $lessonId]);
 $progress = $stmt->fetch();
 
 if (!$progress || !in_array($progress['status'], ['available', 'completed'])) {
-    echo json_encode(['success' => false, 'message' => 'Lección no disponible']);
+    echo json_encode(['success' => false, 'message' => 'Lesson not available']);
     exit;
 }
 

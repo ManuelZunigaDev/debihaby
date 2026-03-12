@@ -163,56 +163,24 @@ if (!empty($completedWithScore)) {
                 <?php endif; ?>
 
                 <div class="dashboard-grid-main">
-                    <div class="main-column">
-                        <div class="current-lesson-hero card-premium mb-2">
+                    <div class="main-column" style="grid-column: 1 / -1;">
+                        <div class="current-lesson-hero card-premium mb-2" style="min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
                             <div class="hero-label">CONTINUAR APRENDIENDO</div>
                             <?php if ($currentLesson): ?>
-                                <h2><?php echo htmlspecialchars($currentLesson['title']); ?></h2>
-                                <p><?php echo htmlspecialchars($currentLesson['description']); ?></p>
-                                <div class="lesson-meta">
+                                <h1 style="font-size: 2.5rem; margin-bottom: 1rem;"><?php echo htmlspecialchars($currentLesson['title']); ?></h1>
+                                <p style="font-size: 1.1rem; max-width: 600px;"><?php echo htmlspecialchars($currentLesson['description']); ?></p>
+                                <div class="lesson-meta" style="margin: 1.5rem 0;">
                                     <span><i class="fas fa-tags"></i> <?php echo htmlspecialchars($currentLesson['category']); ?></span>
                                     <span><i class="fas fa-bolt"></i> +<?php echo $currentLesson['xp_reward']; ?> XP</span>
                                 </div>
-                                <a href="lesson.php?id=<?php echo $currentLesson['id']; ?>" class="btn btn-primary mt-1">
+                                <a href="lesson.php?id=<?php echo $currentLesson['id']; ?>" class="btn btn-primary btn-lg" style="align-self: flex-start; padding: 1rem 2rem; font-size: 1.1rem;">
                                     <i class="fas fa-play"></i> Iniciar Lección
                                 </a>
                             <?php else: ?>
                                 <h2>¡Has completado todas las lecciones!</h2>
-                                <p>Mantente atento a nuevas actualizaciones.</p>
+                                <p>Excelente trabajo. Mantente atento a nuevas actualizaciones o repasa tus cursos anteriores.</p>
+                                <a href="javascript:void(0)" onclick="switchTab('stats')" class="btn btn-secondary mt-1">Ver Mis Logros</a>
                             <?php endif; ?>
-                        </div>
-
-                        <div class="card-premium mb-2">
-                            <h3><i class="fas fa-rocket"></i> Acceso Rápido</h3>
-                            <div class="quick-tools">
-                                <a href="javascript:void(0)" onclick="switchTab('news')" class="tool-btn"><i class="fas fa-newspaper"></i><span>Noticias</span></a>
-                                <a href="javascript:void(0)" onclick="switchTab('experts')" class="tool-btn"><i class="fas fa-user-tie"></i><span>Expertos</span></a>
-                                <a href="javascript:void(0)" onclick="switchTab('myths')" class="tool-btn"><i class="fas fa-brain"></i><span>Mitos</span></a>
-                                <a href="javascript:void(0)" onclick="switchTab('tools')" class="tool-btn"><i class="fas fa-calculator"></i><span>Calculadora</span></a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card-column">
-                        <div class="card card-premium mission-card">
-                            <h3><i class="fas fa-crosshairs"></i> Tu Progreso</h3>
-                            <div class="mission-content">
-                                <p><?php echo $completedLessons; ?> de <?php echo $totalLessons; ?> lecciones</p>
-                                <div class="progress-bar-container"><div class="progress-bar" style="width: <?php echo $progressPercent; ?>%"></div></div>
-                            </div>
-                        </div>
-                        
-                        <div class="card activity-card card-premium">
-                            <h3><i class="fas fa-clock-rotate-left"></i> Actividad Reciente</h3>
-                            <div class="activity-list">
-                                <?php if (empty($recentActivity)): ?>
-                                    <div class="activity-item"><div class="activity-info"><strong>¡Bienvenido!</strong><span>Comienza hoy</span></div><span class="activity-tag">🚀</span></div>
-                                <?php else: ?>
-                                    <?php foreach (array_slice($recentActivity, 0, 3) as $activity): ?>
-                                        <div class="activity-item"><div class="activity-info"><strong><?php echo htmlspecialchars($activity['title']); ?></strong><span><?php echo $activity['date']; ?></span></div><span class="activity-tag"><?php echo $activity['xp']; ?></span></div>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -220,27 +188,53 @@ if (!empty($completedWithScore)) {
 
             <!-- New Mis Cursos Tab -->
             <div id="tab-courses" class="tab-content">
-                <div class="card path-card card-premium">
-                    <div class="card-header">
-                        <h2 style="margin:0;"><i class="fas fa-graduation-cap"></i> Mis Cursos</h2>
-                        <span class="progress-badge"><?php echo $progressPercent; ?>% completado</span>
-                    </div>
-                    <div class="learning-path">
-                        <?php foreach ($learningPath as $lesson): ?>
-                            <div class="path-node <?php echo $lesson['status']; ?>" onclick="if('<?php echo $lesson['status']; ?>' !== 'locked') window.location.href='lesson.php?id=<?php echo $lesson['id']; ?>'">
-                                <div class="node-circle">
-                                    <?php if ($lesson['status'] === 'completed'): ?><i class="fas fa-check-circle"></i>
-                                    <?php elseif ($lesson['status'] === 'available'): ?><i class="fas <?php echo $lesson['icon_class'] ?: 'fa-play'; ?>"></i>
-                                    <?php else: ?><i class="fas fa-lock"></i><?php endif; ?>
+                <div class="path-container" style="display: flex; flex-direction: column; gap: 2.5rem;">
+                    <?php 
+                    $categories = [
+                        'Activos' => ['icon' => 'fa-coins', 'color' => '#FF9800'],
+                        'Pasivos' => ['icon' => 'fa-file-invoice-dollar', 'color' => '#f44336'],
+                        'Capital' => ['icon' => 'fa-vault', 'color' => '#4CAF50'],
+                        'Estados Financieros' => ['icon' => 'fa-chart-pie', 'color' => '#2196F3'],
+                        'General' => ['icon' => 'fa-book', 'color' => '#9c27b0']
+                    ];
+
+                    foreach ($categories as $catName => $catData): 
+                        $catLessons = array_filter($learningPath, function($l) use ($catName) { return $l['category'] === $catName; });
+                        if (empty($catLessons)) continue;
+                    ?>
+                        <div class="course-module">
+                            <div class="module-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 0.5rem;">
+                                <div class="module-icon" style="width: 50px; height: 50px; background: <?php echo $catData['color']; ?>20; color: <?php echo $catData['color']; ?>; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                    <i class="fas <?php echo $catData['icon']; ?>"></i>
                                 </div>
-                                <div class="node-content">
-                                    <h3><?php echo htmlspecialchars($lesson['title']); ?></h3>
-                                    <p><?php echo htmlspecialchars($lesson['category']); ?> · <?php echo $lesson['xp_reward']; ?> XP</p>
-                                    <?php if ($lesson['status'] === 'completed'): ?><span class="score-tag" style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">Calificación: <?php echo $lesson['score']; ?>%</span><?php endif; ?>
+                                <div>
+                                    <h2 style="margin: 0; font-size: 1.4rem; color: #1a1a2e;">Módulo: <?php echo $catName; ?></h2>
+                                    <p style="margin: 0; color: #636e72; font-size: 0.9rem;"><?php echo count($catLessons); ?> Lecciones disponibles</p>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
-                    </div>
+                            
+                            <div class="learning-path" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                                <?php foreach ($catLessons as $lesson): ?>
+                                    <div class="path-node <?php echo $lesson['status']; ?>" 
+                                         style="margin: 0; width: 100%; cursor: pointer;"
+                                         onclick="if('<?php echo $lesson['status']; ?>' !== 'locked') window.location.href='lesson.php?id=<?php echo $lesson['id']; ?>'">
+                                        <div class="node-circle" style="flex-shrink: 0;">
+                                            <?php if ($lesson['status'] === 'completed'): ?><i class="fas fa-check-circle"></i>
+                                            <?php elseif ($lesson['status'] === 'available'): ?><i class="fas <?php echo $lesson['icon_class'] ?: 'fa-play'; ?>"></i>
+                                            <?php else: ?><i class="fas fa-lock"></i><?php endif; ?>
+                                        </div>
+                                        <div class="node-content">
+                                            <h3 style="font-size: 1.1rem;"><?php echo htmlspecialchars($lesson['title']); ?></h3>
+                                            <p style="font-size: 0.85rem;"><?php echo $lesson['xp_reward']; ?> XP</p>
+                                            <?php if ($lesson['status'] === 'completed'): ?>
+                                                <span class="score-tag" style="display: inline-block; background: #E8F5E9; color: #2E7D32; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">Nota: <?php echo $lesson['score']; ?>%</span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
 
