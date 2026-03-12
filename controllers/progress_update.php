@@ -35,20 +35,47 @@ if ($progress['status'] !== 'completed') {
     $stmt = $pdo->prepare("UPDATE user_progress SET status = 'completed', completed_at = NOW() WHERE user_id = ? AND lesson_id = ?");
     $stmt->execute([$userId, $lessonId]);
 
-    $stmt = $pdo->prepare("SELECT id FROM lessons WHERE id > ? ORDER BY id ASC LIMIT 1");
+    // Use DashboardController logic for unlocking next lesson
+    require_once '../controllers/DashboardController.php';
+    $dash = new DashboardController($pdo);
+    
+    // The unlock logic is private in DashboardController, but we can replicate the query here 
+    // to find the next lesson in course order.
+    
+    $stmt = $pdo->prepare("SELECT order_index, course_id FROM lessons WHERE id = ?");
     $stmt->execute([$lessonId]);
-    $nextLesson = $stmt->fetch();
+    $row = $stmt->fetch();
+    $currentOrder = $row['order_index'];
+    $courseId = $row['course_id'];
 
-    if ($nextLesson) {
-        $stmt = $pdo->prepare("SELECT id FROM user_progress WHERE user_id = ? AND lesson_id = ?");
-        $stmt->execute([$userId, $nextLesson['id']]);
-        if (!$stmt->fetch()) {
-            $stmt = $pdo->prepare("INSERT INTO user_progress (user_id, lesson_id, status) VALUES (?, ?, 'available')");
-            $stmt->execute([$userId, $nextLesson['id']]);
-        } else {
-            $stmt = $pdo->prepare("UPDATE user_progress SET status = 'available' WHERE user_id = ? AND lesson_id = ? AND status = 'locked'");
-            $stmt->execute([$userId, $nextLesson['id']]);
+    // Find next in same course
+    $stmt = $pdo->prepare("SELECT id FROM lessons WHERE course_id = ? AND order_index > ? ORDER BY order_index ASC LIMIT 1");
+    $stmt->execute([$courseId, $currentOrder]);
+    $nextLessonId = $stmt->fetchColumn();
+
+    // If course finished, find next course
+    if (!$nextLessonId) {
+        $stmt = $pdo->prepare("SELECT order_index FROM courses WHERE id = ?");
+        $stmt->execute([$courseId]);
+        $courseOrder = $stmt->fetchColumn();
+
+        $stmt = $pdo->prepare("SELECT id FROM courses WHERE order_index > ? ORDER BY order_index ASC LIMIT 1");
+        $stmt->execute([$courseOrder]);
+        $nextCourseId = $stmt->fetchColumn();
+
+        if ($nextCourseId) {
+            $stmt = $pdo->prepare("SELECT id FROM lessons WHERE course_id = ? ORDER BY order_index ASC LIMIT 1");
+            $stmt->execute([$nextCourseId]);
+            $nextLessonId = $stmt->fetchColumn();
         }
+    }
+
+    if ($nextLessonId) {
+        $stmt = $pdo->prepare("INSERT IGNORE INTO user_progress (user_id, lesson_id, status) VALUES (?, ?, 'available')");
+        $stmt->execute([$userId, $nextLessonId]);
+        
+        $stmt = $pdo->prepare("UPDATE user_progress SET status = 'available' WHERE user_id = ? AND lesson_id = ? AND status = 'locked'");
+        $stmt->execute([$userId, $nextLessonId]);
     }
 
     $stmt = $pdo->prepare("UPDATE user_stats SET points = points + 100 WHERE user_id = ?");
