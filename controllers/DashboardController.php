@@ -4,6 +4,20 @@ require_once __DIR__ . '/../includes/config.php';
 class DashboardController {
     private $pdo;
 
+    public function getCourses($userId) {
+        $stmt = $this->pdo->prepare("
+            SELECT c.*, 
+            (SELECT COUNT(*) FROM lessons WHERE course_id = c.id) as total_lessons,
+            (SELECT COUNT(*) FROM user_progress up 
+             JOIN lessons l ON up.lesson_id = l.id 
+             WHERE l.course_id = c.id AND up.user_id = ? AND up.status = 'completed') as completed_lessons
+            FROM courses c
+            ORDER BY c.order_index ASC
+        ");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll();
+    }
+
     public function __construct($pdo) {
         $this->pdo = $pdo;
     }
@@ -132,13 +146,33 @@ class DashboardController {
     }
 
     private function unlockNextLesson($userId, $completedLessonId) {
-        $stmt = $this->pdo->prepare("SELECT order_index FROM lessons WHERE id = ?");
+        $stmt = $this->pdo->prepare("SELECT order_index, course_id FROM lessons WHERE id = ?");
         $stmt->execute([$completedLessonId]);
-        $currentOrder = $stmt->fetchColumn();
+        $row = $stmt->fetch();
+        $currentOrder = $row['order_index'];
+        $courseId = $row['course_id'];
 
-        $stmt = $this->pdo->prepare("SELECT id FROM lessons WHERE order_index > ? ORDER BY order_index ASC LIMIT 1");
-        $stmt->execute([$currentOrder]);
+        // Unlock next lesson in SAME course
+        $stmt = $this->pdo->prepare("SELECT id FROM lessons WHERE course_id = ? AND order_index > ? ORDER BY order_index ASC LIMIT 1");
+        $stmt->execute([$courseId, $currentOrder]);
         $nextLessonId = $stmt->fetchColumn();
+
+        // If no more lessons in current course, unlock first lesson of NEXT course
+        if (!$nextLessonId) {
+            $stmt = $this->pdo->prepare("SELECT order_index FROM courses WHERE id = ?");
+            $stmt->execute([$courseId]);
+            $currentCourseOrder = $stmt->fetchColumn();
+
+            $stmt = $this->pdo->prepare("SELECT id FROM courses WHERE order_index > ? ORDER BY order_index ASC LIMIT 1");
+            $stmt->execute([$currentCourseOrder]);
+            $nextCourseId = $stmt->fetchColumn();
+
+            if ($nextCourseId) {
+                $stmt = $this->pdo->prepare("SELECT id FROM lessons WHERE course_id = ? ORDER BY order_index ASC LIMIT 1");
+                $stmt->execute([$nextCourseId]);
+                $nextLessonId = $stmt->fetchColumn();
+            }
+        }
 
         if ($nextLessonId) {
             $stmt = $this->pdo->prepare("SELECT status FROM user_progress WHERE user_id = ? AND lesson_id = ?");

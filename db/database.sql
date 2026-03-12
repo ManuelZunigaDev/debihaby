@@ -1,9 +1,7 @@
--- DebiHaby Database Schema - FINAL VERSION WITH AUTH FIXES
-
+-- DebiHaby Database Schema - MULTI-COURSE VERSION
 CREATE DATABASE IF NOT EXISTS debihaby_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE debihaby_db;
 
--- Table for users (students)
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -11,14 +9,10 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     full_name VARCHAR(100),
     avatar VARCHAR(255) DEFAULT 'assets/debi_pet.png',
-    age INT,
-    academic_level VARCHAR(100),
-    knowledge_level ENUM('principiante', 'intermedio_basico', 'intermedio', 'avanzado') DEFAULT 'principiante',
     role ENUM('student', 'admin') DEFAULT 'student',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table for student stats and gamification
 CREATE TABLE IF NOT EXISTS user_stats (
     user_id INT PRIMARY KEY,
     points INT DEFAULT 0,
@@ -29,18 +23,27 @@ CREATE TABLE IF NOT EXISTS user_stats (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Table for lessons/topics
-CREATE TABLE IF NOT EXISTS lessons (
+CREATE TABLE IF NOT EXISTS courses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     description TEXT,
-    category ENUM('Activos', 'Pasivos', 'Capital', 'General', 'Estados Financieros') DEFAULT 'General',
-    order_index INT DEFAULT 0,
-    xp_reward INT DEFAULT 100,
-    icon_class VARCHAR(50) DEFAULT 'fa-book'
+    category VARCHAR(50),
+    icon VARCHAR(50) DEFAULT 'fa-graduation-cap',
+    color VARCHAR(20) DEFAULT '#2196F3',
+    order_index INT DEFAULT 0
 );
 
--- Table for user progress in lessons
+CREATE TABLE IF NOT EXISTS lessons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    order_index INT DEFAULT 0,
+    xp_reward INT DEFAULT 100,
+    icon_class VARCHAR(50) DEFAULT 'fa-book',
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS user_progress (
     user_id INT,
     lesson_id INT,
@@ -52,45 +55,61 @@ CREATE TABLE IF NOT EXISTS user_progress (
     FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
 );
 
--- --- INITIAL DATA ---
-
+-- INITIAL DATA
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE user_progress;
 TRUNCATE TABLE user_stats;
 TRUNCATE TABLE lessons;
+TRUNCATE TABLE courses;
 TRUNCATE TABLE users;
 SET FOREIGN_KEY_CHECKS = 1;
 
--- Default User: user / user (Student)
--- PASSWORD_HASH for 'user' is: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
 INSERT INTO users (id, username, email, password, full_name, role) VALUES 
 (1, 'user', 'user@debihaby.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Usuario Estudiante', 'student'),
-(2, 'admin', 'admin@debihaby.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Administrador Debi', 'admin'),
-(3, 'berny_m', 'berny@cbtis171.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Bernardo Martínez', 'student');
+(2, 'admin', 'admin@debihaby.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Administrador Debi', 'admin');
 
--- Stats
 INSERT INTO user_stats (user_id, points, level, experience, streak) VALUES 
 (1, 0, 1, 0, 0),
-(2, 5000, 5, 0, 0),
-(3, 3200, 4, 1200, 7);
+(2, 5000, 5, 0, 0);
 
--- Lessons (Expanded to 15 lessons)
-INSERT INTO lessons (title, description, category, order_index, xp_reward, icon_class) VALUES 
-('¿Qué es un Activo?', 'Conceptos básicos de los bienes de la empresa.', 'Activos', 1, 100, 'fa-coins'),
-('Activo Circulante', 'Bienes de alta disponibilidad: efectivo, inventario, cuentas por cobrar.', 'Activos', 2, 120, 'fa-wallet'),
-('Activo Fijo', 'Bienes de uso permanente: maquinaria, edificios, vehículos.', 'Activos', 3, 120, 'fa-building'),
-('Activo Diferido', 'Gastos pagados por anticipado que generan beneficios futuros.', 'Activos', 4, 120, 'fa-clock-rotate-left'),
-('¿Qué es un Pasivo?', 'Las obligaciones y deudas del negocio con terceros.', 'Pasivos', 5, 100, 'fa-file-invoice-dollar'),
-('Pasivo a Corto Plazo', 'Deudas que deben pagarse en menos de un año.', 'Pasivos', 6, 120, 'fa-calendar-day'),
-('Pasivo a Largo Plazo', 'Obligaciones con vencimiento mayor a un año.', 'Pasivos', 7, 120, 'fa-calendar-check'),
-('El Capital Contable', 'Patrimonio neto de los dueños: activo menos pasivo.', 'Capital', 8, 150, 'fa-vault'),
-('Capital Social', 'Aportaciones iniciales y adicionales de los socios.', 'Capital', 9, 130, 'fa-users-gear'),
-('La Ecuación Contable', 'El balance fundamental: Activo = Pasivo + Capital.', 'General', 10, 130, 'fa-scale-balanced'),
-('Partida Doble', 'El principio de que a todo cargo corresponde un abono.', 'General', 11, 140, 'fa-plus-minus'),
-('Ingresos y Gastos', 'Cómo se generan las utilidades y pérdidas de un negocio.', 'Estados Financieros', 12, 140, 'fa-chart-line'),
-('El Balance General', 'El estado financiero más importante: fotografía del negocio.', 'Estados Financieros', 13, 160, 'fa-table-columns'),
-('Estado de Resultados', 'Muestra la utilidad o pérdida neta de un periodo.', 'Estados Financieros', 14, 160, 'fa-file-lines'),
-('Cierre Contable', 'Proceso de finalización de un ciclo contable.', 'General', 15, 200, 'fa-flag-checkered');
+INSERT INTO courses (id, title, description, category, icon, color, order_index) VALUES 
+(1, 'Fundamentos Contables', 'Los pilares básicos de la contabilidad empresarial.', 'Básico', 'fa-coins', '#FF9800', 1),
+(2, 'Ciclo de Deudas (Pasivos)', 'Entender y gestionar lo que la empresa debe.', 'Intermedio', 'fa-file-invoice-dollar', '#f44336', 2),
+(3, 'Patrimonio y Capital', 'El valor real de los dueños y socios.', 'Intermedio', 'fa-vault', '#4CAF50', 3),
+(4, 'Rendimiento Financiero', 'Ingresos, gastos y utilidades.', 'Avanzado', 'fa-chart-line', '#2196F3', 4),
+(5, 'Control y Auditoría', 'Cierres, reportes y veracidad contable.', 'Avanzado', 'fa-shield-check', '#9c27b0', 5);
+
+INSERT INTO lessons (course_id, title, description, order_index, xp_reward, icon_class) VALUES 
+-- Curso 1: Fundamentos
+(1, '¿Qué es un Activo?', 'Conceptos básicos de bienes.', 1, 100, 'fa-coins'),
+(1, 'Activo Circulante', 'Efectivo e inventarios.', 2, 120, 'fa-wallet'),
+(1, 'Activo Fijo', 'Maquinaria y edificios.', 3, 120, 'fa-building'),
+(1, 'Activo Diferido', 'Pagos anticipados.', 4, 120, 'fa-clock'),
+(1, 'Inventarios Físicos', 'Control de mercancía real.', 5, 150, 'fa-boxes-stacked'),
+-- Curso 2: Pasivos
+(2, '¿Qué es un Pasivo?', 'Obligaciones con terceros.', 1, 100, 'fa-file-invoice-dollar'),
+(2, 'Pasivo a Corto Plazo', 'Deudas inmediatas.', 2, 120, 'fa-calendar-day'),
+(2, 'Pasivo a Largo Plazo', 'Hipotecas y créditos.', 3, 120, 'fa-calendar-check'),
+(2, 'Cuentas por Pagar', 'Gestión de proveedores.', 4, 130, 'fa-truck'),
+(2, 'Préstamos Bancarios', 'Intereses y amortización.', 5, 150, 'fa-bank'),
+-- Curso 3: Capital
+(3, 'El Capital Contable', 'Patrimonio neto.', 1, 150, 'fa-vault'),
+(3, 'Capital Social', 'Aportaciones de socios.', 2, 130, 'fa-users'),
+(3, 'Utilidades Retenidas', 'Ganancias no repartidas.', 3, 140, 'fa-piggy-bank'),
+(3, 'Reservas Legales', 'Fondos de protección.', 4, 140, 'fa-gavel'),
+(3, 'Dividendos', 'Reparto de beneficios.', 5, 160, 'fa-hand-holding-dollar'),
+-- Curso 4: Rendimiento
+(4, 'La Ecuación Contable', 'Activo = Pasivo + Capital.', 1, 130, 'fa-scale-balanced'),
+(4, 'Partida Doble', 'Cargo y Abono.', 2, 140, 'fa-plus-minus'),
+(4, 'Ingresos Operativos', 'Ventas reales.', 3, 140, 'fa-cart-shopping'),
+(4, 'Gastos de Operación', 'Nómina y luz.', 4, 140, 'fa-lightbulb'),
+(4, 'Punto de Equilibrio', '¿Cuándo empezamos a ganar?', 5, 180, 'fa-bullseye'),
+-- Curso 5: Control
+(5, 'El Balance General', 'Foto del negocio.', 1, 160, 'fa-table-columns'),
+(5, 'Estado de Resultados', 'Ganancia o Pérdida.', 2, 160, 'fa-file-lines'),
+(5, 'Cierre Mensual', 'Cuadre de cuentas.', 3, 180, 'fa-calendar-check'),
+(5, 'Auditoría Básica', 'Verificar que no falte nada.', 4, 200, 'fa-magnifying-glass-chart'),
+(5, 'Ética Contable', 'Transparencia y legalidad.', 5, 250, 'fa-flag-checkered');
 
 -- ... (Progress logic would update accordingly when a user starts)
 

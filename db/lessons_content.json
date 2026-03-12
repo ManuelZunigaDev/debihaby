@@ -1,122 +1,31 @@
 {
-    "1": {
-        "title": "¿Qué es un Activo?",
-        "category": "Activos",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Un Activo es un recurso controlado por la empresa que generará beneficios futuros. Es todo lo que la empresa TIENE o le DEBEN." },
-            "evaluacion": { "type": "drag_drop", "content": "Arrastra los Activos al cofre.", "items": [{"text": "Efectivo", "type": "activo"}, {"text": "Deuda Bancaria", "type": "pasivo"}, {"text": "Mercancía", "type": "activo"}] }
-        }
-    },
-    "2": {
-        "title": "Activo Circulante",
-        "category": "Activos",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Son los bienes que se pueden convertir en efectivo en menos de un año. Incluye Caja, Bancos, Clientes e Inventarios." },
-            "evaluacion": { "type": "drag_drop", "content": "Identifica los circulantes.", "items": [{"text": "Dinero en Caja", "type": "activo"}, {"text": "Edificio", "type": "pasivo"}] }
-        }
-    },
-    "3": {
-        "title": "Activo Fijo",
-        "category": "Activos",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Bienes duraderos para operar la empresa, no para la venta. Terrenos, Edificios, Mobiliario." },
-            "evaluacion": { "type": "drag_drop", "content": "Busca los activos fijos.", "items": [{"text": "Camión de reparto", "type": "activo"}, {"text": "Papelería", "type": "pasivo"}] }
-        }
-    },
-    "4": {
-        "title": "Activo Diferido",
-        "category": "Activos",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Pagos hechos por adelantado, como Rentas o Seguros pagados por anticipado." },
-            "evaluacion": { "type": "drag_drop", "content": "Selecciona el diferido.", "items": [{"text": "Seguro Pagado por Anticipado", "type": "activo"}, {"text": "Factura por Pagar", "type": "pasivo"}] }
-        }
-    },
-    "5": {
-        "title": "¿Qué es un Pasivo?",
-        "category": "Pasivos",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Las obligaciones y deudas del negocio con terceros (fuentes externas)." },
-            "evaluacion": { "type": "drag_drop", "content": "Arrastra las deudas.", "items": [{"text": "Préstamo Bancario", "type": "activo"}, {"text": "Venta Realizada", "type": "pasivo"}] }
-        }
-    },
-    "6": {
-        "title": "Pasivo a Corto Plazo",
-        "category": "Pasivos",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Deudas que deben pagarse en un periodo menor a un año, como Proveedores o impuestos." },
-            "evaluacion": { "type": "drag_drop", "content": "Busca deudas cercanas.", "items": [{"text": "Pago a Proveedor (30 días)", "type": "activo"}, {"text": "Hipoteca (10 años)", "type": "pasivo"}] }
-        }
-    },
-    "7": {
-        "title": "Pasivo a Largo Plazo",
-        "category": "Pasivos",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Obligaciones con vencimiento mayor a un año, como Hipotecas o créditos bancarios grandes." },
-            "evaluacion": { "type": "drag_drop", "content": "Identifica el largo plazo.", "items": [{"text": "Crédito Hipotecario", "type": "activo"}, {"text": "Luz por pagar", "type": "pasivo"}] }
-        }
-    },
-    "8": {
-        "title": "El Capital Contable",
-        "category": "Capital",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Es el valor residual de los activos una vez deducidos los pasivos. Lo que realmente pertenece a los dueños." },
-            "evaluacion": { "type": "drag_drop", "content": "Busca el patrimonio.", "items": [{"text": "Utilidad neta", "type": "activo"}, {"text": "Cuentas por pagar", "type": "pasivo"}] }
-        }
-    },
-    "9": {
-        "title": "Capital Social",
-        "category": "Capital",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Son las aportaciones iniciales y adicionales hechas por los socios o dueños de la empresa." },
-            "evaluacion": { "type": "drag_drop", "content": "Arrastra las aportaciones.", "items": [{"text": "Aportación de socios", "type": "activo"}, {"text": "Gasto de luz", "type": "pasivo"}] }
-        }
-    },
-    "10": {
-        "title": "La Ecuación Contable",
-        "category": "General",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "El equilibrio fundamental: Activo = Pasivo + Capital. Todo lo que tienes vino de una deuda o de tu dinero." },
-            "evaluacion": { "type": "drag_drop", "content": "¿Sigue el equilibrio?", "items": [{"text": "Activo = Pasivo + Capital", "type": "activo"}, {"text": "Activo = Pasivo - Capital", "type": "pasivo"}] }
-        }
-    },
-    "11": {
-        "title": "Partida Doble",
-        "category": "General",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "A todo cargo corresponde un abono. Cada transacción afecta al menos dos cuentas para mantener el equilibrio." },
-            "evaluacion": { "type": "drag_drop", "content": "Aplica la partida doble.", "items": [{"text": "Un cargo y un abono", "type": "activo"}, {"text": "Solo un cargo", "type": "pasivo"}] }
-        }
-    },
-    "12": {
-        "title": "Ingresos y Gastos",
-        "category": "Estados Financieros",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Los ingresos son entradas por ventas; los gastos son salidas necesarias para operar. La resta es la utilidad." },
-            "evaluacion": { "type": "drag_drop", "content": "Busca la ganancia.", "items": [{"text": "Venta de servicios", "type": "activo"}, {"text": "Pago de nómina", "type": "pasivo"}] }
-        }
-    },
-    "13": {
-        "title": "El Balance General",
-        "category": "Estados Financieros",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Estado financiero que muestra Activos, Pasivos y Capital a una fecha determinada. Es una foto de la empresa." },
-            "evaluacion": { "type": "drag_drop", "content": "Arma el balance.", "items": [{"text": "Activos y Pasivos", "type": "activo"}, {"text": "Solo gastos", "type": "pasivo"}] }
-        }
-    },
-    "14": {
-        "title": "Estado de Resultados",
-        "category": "Estados Financieros",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Reporte que muestra si la empresa ganó o perdió dinero en un periodo, restando gastos a los ingresos." },
-            "evaluacion": { "type": "drag_drop", "content": "Analiza resultados.", "items": [{"text": "Ingresos - Gastos", "type": "activo"}, {"text": "Activo + Pasivo", "type": "pasivo"}] }
-        }
-    },
-    "15": {
-        "title": "Cierre Contable",
-        "category": "General",
-        "steps": {
-            "explicacion": { "type": "theory", "content": "Proceso final del ciclo donde se cancelan cuentas temporales y se determina el resultado final para iniciar un nuevo año." },
-            "evaluacion": { "type": "drag_drop", "content": "Finaliza el ciclo.", "items": [{"text": "Cancelar saldos", "type": "activo"}, {"text": "Comprar camión", "type": "pasivo"}] }
+    "1": { "title": "¿Qué es un Activo?", "category": "Activos", "steps": { "explicacion": { "type": "theory", "content": "Un Activo representa bienes y derechos. Ej: Efectivo, Cuentas por Cobrar." }, "evaluacion": { "type": "drag_drop", "content": "Identifica los activos.", "items": [{"text": "Dinero", "type": "activo"}, {"text": "Préstamo", "type": "pasivo"}] } } },
+    "2": { "title": "Activo Circulante", "category": "Activos", "steps": { "explicacion": { "type": "theory", "content": "Bienes con liquidez menor a 1 año. Ej: Caja y Bancos." }, "evaluacion": { "type": "drag_drop", "content": "Busca el circulante.", "items": [{"text": "Inventario", "type": "activo"}, {"text": "Maquinaria", "type": "pasivo"}] } } },
+    "3": { "title": "Activo Fijo", "category": "Activos", "steps": { "explicacion": { "type": "theory", "content": "Bienes duraderos para uso. Ej: Edificios, Camiones." }, "evaluacion": { "type": "drag_drop", "content": "Busca el fijo.", "items": [{"text": "Oficina", "type": "activo"}, {"text": "Seguro", "type": "pasivo"}] } } },
+    "4": { "title": "Activo Diferido", "category": "Activos", "steps": { "explicacion": { "type": "theory", "content": "Pagos anticipados. Ej: Rentas pagadas por adelantado." }, "evaluacion": { "type": "drag_drop", "content": "Busca el diferido.", "items": [{"text": "Renta prepagada", "type": "activo"}, {"text": "Luz por pagar", "type": "pasivo"}] } } },
+    "5": { "title": "Inventarios Físicos", "category": "Activos", "steps": { "explicacion": { "type": "theory", "content": "Conteo real de mercancía para asegurar que el registro coincida." }, "evaluacion": { "type": "drag_drop", "content": "Control de stock.", "items": [{"text": "Conteo físico", "type": "activo"}, {"text": "Venta", "type": "pasivo"}] } } },
+    "6": { "title": "¿Qué es un Pasivo?", "category": "Pasivos", "steps": { "explicacion": { "type": "theory", "content": "Deudas y obligaciones. Ej: Proveedores, Impuestos." }, "evaluacion": { "type": "drag_drop", "content": "Selecciona deudas.", "items": [{"text": "Hipoteca", "type": "activo"}, {"text": "Mercancía", "type": "pasivo"}] } } },
+    "7": { "title": "Pasivo a Corto Plazo", "category": "Pasivos", "steps": { "explicacion": { "type": "theory", "content": "Deudas a pagar en menos de un año. Pasivo Circulante." }, "evaluacion": { "type": "drag_drop", "content": "B corto plazo.", "items": [{"text": "Factura luz", "type": "activo"}, {"text": "Crédito 5 años", "type": "pasivo"}] } } },
+    "8": { "title": "Pasivo a Largo Plazo", "category": "Pasivos", "steps": { "explicacion": { "type": "theory", "content": "Vencimiento mayor a un año. Consolidación de deudas." }, "evaluacion": { "type": "drag_drop", "content": "B largo plazo.", "items": [{"text": "Bonos emitidos", "type": "activo"}, {"text": "Sueldos", "type": "pasivo"}] } } },
+    "9": { "title": "Cuentas por Pagar", "category": "Pasivos", "steps": { "explicacion": { "type": "theory", "content": "Saldos adeudados a proveedores por compras a crédito." }, "evaluacion": { "type": "drag_drop", "content": "Gestión prov.", "items": [{"text": "Factura recibida", "type": "activo"}, {"text": "Caja", "type": "pasivo"}] } } },
+    "10": { "title": "Préstamos Bancarios", "category": "Pasivos", "steps": { "explicacion": { "type": "theory", "content": "Financiamiento externo con costo (interés)." }, "evaluacion": { "type": "drag_drop", "content": "Crédito.", "items": [{"text": "Pagaré", "type": "activo"}, {"text": "Terreno", "type": "pasivo"}] } } },
+    "11": { "title": "El Capital Contable", "category": "Capital", "steps": { "explicacion": { "type": "theory", "content": "Lo que queda si pagas todas las deudas. Valor neto." }, "evaluacion": { "type": "drag_drop", "content": "Identifica capital.", "items": [{"text": "Patrimonio", "type": "activo"}, {"text": "Deuda luz", "type": "pasivo"}] } } },
+    "12": { "title": "Capital Social", "category": "Capital", "steps": { "explicacion": { "type": "theory", "content": "Inversión original de los socios al fundar la empresa." }, "evaluacion": { "type": "drag_drop", "content": "Aportes.", "items": [{"text": "Aportación soc.", "type": "activo"}, {"text": "Venta zapato", "type": "pasivo"}] } } },
+    "13": { "title": "Utilidades Retenidas", "category": "Capital", "steps": { "explicacion": { "type": "theory", "content": "Ganancias acumuladas reinvertidas en el propio negocio." }, "evaluacion": { "type": "drag_drop", "content": "Reinversión.", "items": [{"text": "Utilidad acum.", "type": "activo"}, {"text": "Compra hoja", "type": "pasivo"}] } } },
+    "14": { "title": "Reservas Legales", "category": "Capital", "steps": { "explicacion": { "type": "theory", "content": "Fondo obligatorio por ley para proteger ante pérdidas." }, "evaluacion": { "type": "drag_drop", "content": "Protección.", "items": [{"text": "Fondo reserva", "type": "activo"}, {"text": "Gasto cena", "type": "pasivo"}] } } },
+    "15": { "title": "Dividendos", "category": "Capital", "steps": { "explicacion": { "type": "theory", "content": "Parte de la utilidad repartida físicamente a los socios." }, "evaluacion": { "type": "drag_drop", "content": "Reparto.", "items": [{"text": "Cheque socio", "type": "activo"}, {"text": "Préstamo", "type": "pasivo"}] } } },
+    "16": { "title": "La Ecuación Contable", "category": "Rendimiento", "steps": { "explicacion": { "type": "theory", "content": "A = P + C. El equilibrio sagrado de los libros." }, "evaluacion": { "type": "drag_drop", "content": "Equilibrio.", "items": [{"text": "Activo = Pas+Cap", "type": "activo"}, {"text": "Activo = Pas-Cap", "type": "pasivo"}] } } },
+    "17": { "title": "Partida Doble", "category": "Rendimiento", "steps": { "explicacion": { "type": "theory", "content": "Todo movimiento tiene dos efectos. Ni se crea ni se destruye." }, "evaluacion": { "type": "drag_drop", "content": "Cargo vs Abono.", "items": [{"text": "Cargo y Abono", "type": "activo"}, {"text": "Solo Cargo", "type": "pasivo"}] } } },
+    "18": { "title": "Ingresos Operativos", "category": "Rendimiento", "steps": { "explicacion": { "type": "theory", "content": "Entradas por ventas del giro principal del negocio." }, "evaluacion": { "type": "drag_drop", "content": "Ventas.", "items": [{"text": "Venta mercadería", "type": "activo"}, {"text": "Robo", "type": "pasivo"}] } } },
+    "19": { "title": "Gastos de Operación", "category": "Rendimiento", "steps": { "explicacion": { "type": "theory", "content": "Costos necesarios para que el negocio funcione día a día." }, "evaluacion": { "type": "drag_drop", "content": "Gastos neces.", "items": [{"text": "Nómina", "type": "activo"}, {"text": "Inversión", "type": "pasivo"}] } } },
+    "20": { "title": "Punto de Equilibrio", "category": "Rendimiento", "steps": { "explicacion": { "type": "theory", "content": "Nivel de ventas donde no hay ni ganancia ni pérdida." }, "evaluacion": { "type": "drag_drop", "content": "Meta mínima.", "items": [{"text": "Ventas = Costos", "type": "activo"}, {"text": "Ventas < Costos", "type": "pasivo"}] } } },
+    "21": { "title": "El Balance General", "category": "Control", "steps": { "explicacion": { "type": "theory", "content": "Estado que muestra la situación financiera a una fecha." }, "evaluacion": { "type": "drag_drop", "content": "Dashboard fin.", "items": [{"text": "Balance real", "type": "activo"}, {"text": "Nota mental", "type": "pasivo"}] } } },
+    "22": { "title": "Estado de Resultados", "category": "Control", "steps": { "explicacion": { "type": "theory", "content": "Reporte dinámico de rentabilidad en un tiempo dado." }, "evaluacion": { "type": "drag_drop", "content": "Ganancia/Pérdida.", "items": [{"text": "Ingresos - Gastos", "type": "activo"}, {"text": "Inventario", "type": "pasivo"}] } } },
+    "23": { "title": "Cierre Mensual", "category": "Control", "steps": { "explicacion": { "type": "theory", "content": "Revisión de saldos antes de cerrar el mes e iniciar otro." }, "evaluacion": { "type": "drag_drop", "content": "Fin de mes.", "items": [{"text": "Conciliación", "type": "activo"}, {"text": "Venta nueva", "type": "pasivo"}] } } },
+    "24": { "title": "Auditoría Básica", "category": "Control", "steps": { "explicacion": { "type": "theory", "content": "Revisar facturas vs libros para asegurar veracidad." }, "evaluacion": { "type": "drag_drop", "content": "Checking.", "items": [{"text": "Verificar ticket", "type": "activo"}, {"text": "Tirar basura", "type": "pasivo"}] } } },
+    "25": { "title": "Ética Contable", "category": "Control", "steps": { "explicacion": { "type": "theory", "content": "Honestidad y transparencia en los números presentados." }, "evaluacion": { "type": "drag_drop", "content": "Verdad.", "items": [{"text": "Reporte honesto", "type": "activo"}, {"text": "Maquillar cta.", "type": "pasivo"}] } } }
+}
+sivo"}] }
         }
     }
 }

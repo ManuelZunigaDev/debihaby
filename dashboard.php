@@ -21,6 +21,7 @@ if (!$studentStats) {
 $learningPath = $dashboardController->getLearningPath($userId);
 $currentLesson = $dashboardController->getCurrentLesson($userId);
 $recentActivity = $dashboardController->getRecentActivity($userId);
+$courses = $dashboardController->getCourses($userId);
 
 try {
     $stmt = $pdo->query("SELECT * FROM news ORDER BY created_at DESC LIMIT 5");
@@ -186,50 +187,50 @@ if (!empty($completedWithScore)) {
                 </div>
             </div>
 
-            <!-- New Mis Cursos Tab -->
+            <!-- Redesigned Mis Cursos Tab -->
             <div id="tab-courses" class="tab-content">
-                <div class="path-container" style="display: flex; flex-direction: column; gap: 2.5rem;">
-                    <?php 
-                    $categories = [
-                        'Activos' => ['icon' => 'fa-coins', 'color' => '#FF9800'],
-                        'Pasivos' => ['icon' => 'fa-file-invoice-dollar', 'color' => '#f44336'],
-                        'Capital' => ['icon' => 'fa-vault', 'color' => '#4CAF50'],
-                        'Estados Financieros' => ['icon' => 'fa-chart-pie', 'color' => '#2196F3'],
-                        'General' => ['icon' => 'fa-book', 'color' => '#9c27b0']
-                    ];
-
-                    foreach ($categories as $catName => $catData): 
-                        $catLessons = array_filter($learningPath, function($l) use ($catName) { return $l['category'] === $catName; });
-                        if (empty($catLessons)) continue;
+                <div class="courses-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+                    <?php foreach ($courses as $course): 
+                        $courseProgress = ($course['total_lessons'] > 0) ? round(($course['completed_lessons'] / $course['total_lessons']) * 100) : 0;
                     ?>
-                        <div class="course-module">
-                            <div class="module-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 0.5rem;">
-                                <div class="module-icon" style="width: 50px; height: 50px; background: <?php echo $catData['color']; ?>20; color: <?php echo $catData['color']; ?>; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
-                                    <i class="fas <?php echo $catData['icon']; ?>"></i>
+                        <div class="card-premium course-card" style="display: flex; flex-direction: column; padding: 1.5rem; border-top: 5px solid <?php echo $course['color']; ?>;">
+                            <div style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1rem;">
+                                <div class="course-icon" style="flex-shrink: 0; width: 60px; height: 60px; background: <?php echo $course['color']; ?>15; color: <?php echo $course['color']; ?>; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem;">
+                                    <i class="fas <?php echo $course['icon']; ?>"></i>
                                 </div>
-                                <div>
-                                    <h2 style="margin: 0; font-size: 1.4rem; color: #1a1a2e;">Módulo: <?php echo $catName; ?></h2>
-                                    <p style="margin: 0; color: #636e72; font-size: 0.9rem;"><?php echo count($catLessons); ?> Lecciones disponibles</p>
+                                <div style="flex-grow: 1;">
+                                    <span class="badge" style="background: <?php echo $course['color']; ?>20; color: <?php echo $course['color']; ?>;"><?php echo htmlspecialchars($course['category']); ?></span>
+                                    <h3 style="margin: 0.5rem 0 0 0; font-size: 1.25rem;"><?php echo htmlspecialchars($course['title']); ?></h3>
                                 </div>
                             </div>
+                            <p style="color: var(--dark-light); font-size: 0.95rem; margin-bottom: 1.5rem; min-height: 45px;"><?php echo htmlspecialchars($course['description']); ?></p>
                             
-                            <div class="learning-path" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                                <?php foreach ($catLessons as $lesson): ?>
-                                    <div class="path-node <?php echo $lesson['status']; ?>" 
-                                         style="margin: 0; width: 100%; cursor: pointer;"
+                            <div class="course-stats" style="margin-top: auto;">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600;">
+                                    <span><?php echo $courseProgress; ?>% Completado</span>
+                                    <span><?php echo $course['completed_lessons']; ?>/<?php echo $course['total_lessons']; ?></span>
+                                </div>
+                                <div class="progress-bar-container" style="height: 10px; background: #eee;">
+                                    <div class="progress-bar" style="width: <?php echo $courseProgress; ?>%; background: <?php echo $course['color']; ?>; border-radius: 10px;"></div>
+                                </div>
+                            </div>
+
+                            <button onclick="toggleLessons(<?php echo $course['id']; ?>)" class="btn btn-secondary mt-1" style="width: 100%; border: 1px solid #ddd;">
+                                <i class="fas fa-list-ul"></i> Temario
+                            </button>
+                            
+                            <!-- Hidden Lessons List -->
+                            <div id="lessons-list-<?php echo $course['id']; ?>" class="nested-lessons" style="display: none; margin-top: 1rem; border-top: 1px solid #eee; padding-top: 1rem;">
+                                <?php 
+                                $lessons = array_filter($learningPath, fn($l) => $l['course_id'] == $course['id']);
+                                foreach ($lessons as $lesson): ?>
+                                    <div class="mini-lesson-item <?php echo $lesson['status']; ?>" 
+                                         style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem; border-radius: 10px; margin-bottom: 0.5rem; cursor: pointer; transition: 0.2s;"
                                          onclick="if('<?php echo $lesson['status']; ?>' !== 'locked') window.location.href='lesson.php?id=<?php echo $lesson['id']; ?>'">
-                                        <div class="node-circle" style="flex-shrink: 0;">
-                                            <?php if ($lesson['status'] === 'completed'): ?><i class="fas fa-check-circle"></i>
-                                            <?php elseif ($lesson['status'] === 'available'): ?><i class="fas <?php echo $lesson['icon_class'] ?: 'fa-play'; ?>"></i>
-                                            <?php else: ?><i class="fas fa-lock"></i><?php endif; ?>
-                                        </div>
-                                        <div class="node-content">
-                                            <h3 style="font-size: 1.1rem;"><?php echo htmlspecialchars($lesson['title']); ?></h3>
-                                            <p style="font-size: 0.85rem;"><?php echo $lesson['xp_reward']; ?> XP</p>
-                                            <?php if ($lesson['status'] === 'completed'): ?>
-                                                <span class="score-tag" style="display: inline-block; background: #E8F5E9; color: #2E7D32; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">Nota: <?php echo $lesson['score']; ?>%</span>
-                                            <?php endif; ?>
-                                        </div>
+                                        <div class="status-dot <?php echo $lesson['status']; ?>" style="width: 12px; height: 12px; border-radius: 50%;"></div>
+                                        <span style="font-size: 0.9rem; flex-grow: 1;"><?php echo htmlspecialchars($lesson['title']); ?></span>
+                                        <?php if ($lesson['status'] === 'completed'): ?><i class="fas fa-check-circle" style="color: var(--success);"></i><?php endif; ?>
+                                        <?php if ($lesson['status'] === 'locked'): ?><i class="fas fa-lock" style="color: #ccc;"></i><?php endif; ?>
                                     </div>
                                 <?php endforeach; ?>
                             </div>
@@ -424,6 +425,12 @@ if (!empty($completedWithScore)) {
             const total = amount + iva;
             resultDiv.innerHTML = `<div class="result-row"><span>Subtotal:</span><span>$${amount.toFixed(2)}</span></div><div class="result-row"><span>IVA:</span><span>$${iva.toFixed(2)}</span></div><div class="result-row result-total"><span>Total:</span><span>$${total.toFixed(2)}</span></div>`;
             resultDiv.classList.add('visible');
+        }
+
+        function toggleLessons(courseId) {
+            const list = document.getElementById('lessons-list-' + courseId);
+            const isVisible = list.style.display === 'block';
+            list.style.display = isVisible ? 'none' : 'block';
         }
 
         window.addEventListener('load', () => {
