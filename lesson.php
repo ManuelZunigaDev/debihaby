@@ -165,7 +165,7 @@ $siguienteClavePaso = ($indicePaso !== false && $indicePaso < count($ordenPasos)
                     <span class="stat-icon"><i class="fas fa-gem" style="color: #03A9F4;"></i></span>
                     <span class="stat-value">+100 Puntos ganados</span>
                 </div>
-                <a href="dashboard.php" class="btn btn-primary">Continuar mi Camino</a>
+                <button id="continue-path-btn" class="btn btn-primary">Continuar mi Camino</button>
             </div>
 
             <div class="game-header">
@@ -299,24 +299,31 @@ $siguienteClavePaso = ($indicePaso !== false && $indicePaso < count($ordenPasos)
             }
         });
 
+        const objGuardarProgreso = () => {
+            const datosForm = new FormData();
+            datosForm.append('id_leccion', <?php echo $idLeccion; ?>);
+            fetch('controllers/actualizar_progreso.php', {
+                method: 'POST',
+                body: datosForm
+            })
+            .then(res => res.json())
+            .then(dato => {
+                if (dato.exito) {
+                    window.location.href = 'courses.php';
+                } else {
+                    Swal.fire('Error', dato.mensaje || 'Error al guardar progreso', 'error');
+                }
+            })
+            .catch(() => Swal.fire('Error', 'Error de conexión', 'error'));
+        };
+
         if (botonFinalizar) {
-            botonFinalizar.addEventListener('click', () => {
-                const datosForm = new FormData();
-                datosForm.append('id_leccion', <?php echo $idLeccion; ?>);
-                fetch('controllers/actualizar_progreso.php', {
-                    method: 'POST',
-                    body: datosForm
-                })
-                .then(res => res.json())
-                .then(dato => {
-                    if (dato.exito) {
-                        window.location.href = 'courses.php';
-                    } else {
-                        Swal.fire('Error', dato.mensaje || 'Error al guardar progreso', 'error');
-                    }
-                })
-                .catch(() => Swal.fire('Error', 'Error de conexión', 'error'));
-            });
+            botonFinalizar.addEventListener('click', objGuardarProgreso);
+        }
+
+        const btnContinuarPaso = document.getElementById('continue-path-btn');
+        if (btnContinuarPaso) {
+            btnContinuarPaso.addEventListener('click', objGuardarProgreso);
         }
     </script>
     </main>
