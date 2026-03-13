@@ -14,7 +14,7 @@ class ControladorCurso {
             (SELECT COUNT(*) FROM lecciones WHERE curso_id = c.id) as total_lecciones,
             (SELECT COUNT(*) FROM progreso_usuario up 
              JOIN lecciones l ON up.leccion_id = l.id 
-             WHERE l.curso_id = c.id AND up.usuario_id = ? AND up.estado = 'completado') as lecciones_completadas
+             WHERE l.curso_id = c.id AND up.usuario_id = ? AND up.estado = 'completed') as lecciones_completadas
             FROM cursos c
             ORDER BY c.indice_orden ASC
         ");
@@ -27,7 +27,7 @@ class ControladorCurso {
             SELECT l.*, up.estado, up.puntaje 
             FROM lecciones l
             LEFT JOIN progreso_usuario up ON l.id = up.leccion_id AND up.usuario_id = ?
-            WHERE up.estado = 'disponible' OR up.estado IS NULL
+            WHERE up.estado = 'available' OR up.estado IS NULL
             ORDER BY l.indice_orden ASC
             LIMIT 1
         ");
@@ -39,7 +39,7 @@ class ControladorCurso {
                 SELECT l.*, up.estado, up.puntaje 
                 FROM lecciones l
                 LEFT JOIN progreso_usuario up ON l.id = up.leccion_id AND up.usuario_id = ?
-                WHERE up.estado = 'completado'
+                WHERE up.estado = 'completed'
                 ORDER BY l.indice_orden DESC
                 LIMIT 1
             ");
@@ -57,7 +57,7 @@ class ControladorCurso {
 
     public function obtenerRutaAprendizaje($idUsuario) {
         $stmt = $this->pdo->prepare("
-            SELECT l.*, IFNULL(p.estado, 'bloqueado') as estado, IFNULL(p.puntaje, 0) as puntaje, p.completado_en
+            SELECT l.*, IFNULL(p.estado, 'locked') as estado, IFNULL(p.puntaje, 0) as puntaje, p.completado_en
             FROM lecciones l
             LEFT JOIN progreso_usuario p ON l.id = p.leccion_id AND p.usuario_id = ?
             ORDER BY l.indice_orden ASC
@@ -70,14 +70,14 @@ class ControladorCurso {
         // Asegurarnos de desbloquear siempre la siguiente (por seguridad/reintentos)
         $this->desbloquearSiguienteLeccion($idUsuario, $idLeccion);
 
-        $stmt = $this->pdo->prepare("SELECT usuario_id FROM progreso_usuario WHERE usuario_id = ? AND leccion_id = ? AND estado = 'completado'");
+        $stmt = $this->pdo->prepare("SELECT usuario_id FROM progreso_usuario WHERE usuario_id = ? AND leccion_id = ? AND estado = 'completed'");
         $stmt->execute([$idUsuario, $idLeccion]);
         if ($stmt->fetch()) return false;
 
         $stmt = $this->pdo->prepare("
             INSERT INTO progreso_usuario (usuario_id, leccion_id, estado, completado_en) 
-            VALUES (?, ?, 'completado', NOW())
-            ON DUPLICATE KEY UPDATE estado = 'completado', completado_en = NOW()
+            VALUES (?, ?, 'completed', NOW())
+            ON DUPLICATE KEY UPDATE estado = 'completed', completado_en = NOW()
         ");
         $stmt->execute([$idUsuario, $idLeccion]);
 
@@ -114,7 +114,7 @@ class ControladorCurso {
         }
 
         if ($idSiguienteLeccion) {
-            $stmt = $this->pdo->prepare("INSERT INTO progreso_usuario (usuario_id, leccion_id, estado) VALUES (?, ?, 'disponible') ON DUPLICATE KEY UPDATE estado = IF(estado='bloqueado', 'disponible', estado)");
+            $stmt = $this->pdo->prepare("INSERT INTO progreso_usuario (usuario_id, leccion_id, estado) VALUES (?, ?, 'available') ON DUPLICATE KEY UPDATE estado = IF(estado='locked', 'available', estado)");
             $stmt->execute([$idUsuario, $idSiguienteLeccion]);
         }
     }

@@ -32,7 +32,7 @@ require_once 'includes/config.php';
                 <li><a href="#que-ofrecemos">¿Qué Ofrecemos?</a></li>
                 <li><a href="#video">Video</a></li>
                 <li><a href="#diagnostico">Diagnóstico</a></li>
-                <?php if(isset($_SESSION['user_id'])): ?>
+                <?php if(isset($_SESSION['id_usuario'])): ?>
                     <li><a href="dashboard.php" class="nav-btn">Dashboard</a></li>
                     <li><a href="logout.php" class="nav-btn logout">Salir</a></li>
                 <?php else: ?>
@@ -79,7 +79,7 @@ require_once 'includes/config.php';
         <div class="cta-section">
             <h2>¿Listo para Comenzar?</h2>
             <p>Evalúa tus conocimientos con nuestro diagnóstico inicial.</p>
-            <?php if(!isset($_SESSION['user_id'])): ?>
+            <?php if(!isset($_SESSION['id_usuario'])): ?>
                 <a href="login.php" class="btn btn-primary">Iniciar Sesión</a>
                 <a href="register.php" class="btn btn-secondary">Registrarse</a>
             <?php else: ?>

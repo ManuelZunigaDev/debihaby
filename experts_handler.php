@@ -1,22 +1,21 @@
 <?php
 session_start();
 require_once 'includes/config.php';
+require_once 'includes/auth_check.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
+// Asegurar la página
+protegerPagina();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['question'])) {
-    $userId = $_SESSION['user_id'];
-    $question = trim($_POST['question']);
+    $idUsuario = $_SESSION['id_usuario'];
+    $pregunta = trim($_POST['question']);
     
-    if (!empty($question)) {
-        $stmt = $pdo->prepare("INSERT INTO expert_questions (user_id, question) VALUES (?, ?)");
-        $stmt->execute([$userId, $question]);
+    if (!empty($pregunta)) {
+        $stmt = $pdo->prepare("INSERT INTO preguntas_expertos (usuario_id, pregunta, estado, creado_en) VALUES (?, ?, 'pendiente', NOW())");
+        $stmt->execute([$idUsuario, $pregunta]);
         
-        // Redirect back to dashboard with success message
-        header('Location: dashboard.php?expert_success=1#experts');
+        // Redirigir al dashboard con mensaje de éxito
+        header('Location: dashboard.php?exito_experto=1#experts');
         exit;
     }
 }

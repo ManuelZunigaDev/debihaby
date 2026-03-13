@@ -124,10 +124,10 @@ p {
 }
 
 .logo-img {
-  width: 160px;
-  height: 100px;
+  width: 120px;
+  height: 80px;
   border-radius: 8px;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .nav-menu {
