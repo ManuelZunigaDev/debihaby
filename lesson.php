@@ -1,59 +1,111 @@
 <?php
 session_start();
 require_once 'includes/config.php';
+require_once 'includes/auth_check.php';
+require_once 'controllers/ControladorCurso.php';
+require_once 'controllers/ControladorUsuario.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
+// Proteger la página
+protegerPagina();
+
+$idLeccion = (int)($_GET['id'] ?? 1);
+$clavePaso  = $_GET['paso'] ?? 'explicacion';
+$idUsuario   = (int)$_SESSION['id_usuario'];
+
+$controladorCurso = new ControladorCurso($pdo);
+$controladorUsuario   = new ControladorUsuario($pdo);
+
+// Verificar si la lección es accesible
+$rutaAprendizaje = $controladorCurso->obtenerRutaAprendizaje($idUsuario);
+$progresoLeccionActual = array_filter($rutaAprendizaje, fn($l) => $l['id'] == $idLeccion);
+$datosProgreso = reset($progresoLeccionActual);
+
+if (!$datosProgreso || $datosProgreso['estado'] === 'bloqueado') {
+    header('Location: dashboard.php?bloqueado=1');
     exit;
 }
 
-$lessonId = (int)($_GET['id'] ?? 1);
-$stepKey  = $_GET['step'] ?? 'enganche';
-$userId   = (int)$_SESSION['user_id'];
+$stmt = $pdo->prepare("
+    SELECT l.*, c.categoria 
+    FROM lecciones l 
+    JOIN cursos c ON l.curso_id = c.id 
+    WHERE l.id = ?
+");
+$stmt->execute([$idLeccion]);
+$datosLeccion = $stmt->fetch();
 
-$stmt = $pdo->prepare("SELECT status FROM user_progress WHERE user_id = ? AND lesson_id = ?");
-$stmt->execute([$userId, $lessonId]);
-$progressData = $stmt->fetch();
-
-if (!$progressData || $progressData['status'] === 'locked') {
-    header('Location: dashboard.php?locked=1');
-    exit;
-}
-
-$stmt = $pdo->prepare("SELECT * FROM lessons WHERE id = ?");
-$stmt->execute([$lessonId]);
-$lessonData = $stmt->fetch();
-
-if (!$lessonData) {
+if (!$datosLeccion) {
     header('Location: dashboard.php');
     exit;
 }
 
-$contentFile = 'db/lessons_content.json';
-$allLessonsContent = json_decode(file_get_contents($contentFile), true);
-$currentLessonContent = $allLessonsContent[$lessonId] ?? null;
+$archivoContenido = 'db/lessons_content.json';
+$todoElContenido = json_decode(file_get_contents($archivoContenido), true);
+$contenidoLeccionActual = $todoElContenido[$idLeccion] ?? null;
 
-if (!$currentLessonContent) {
+if (!$contenidoLeccionActual) {
+    $contenidoLeccionActual = [
+        "title" => $datosLeccion['titulo'] ?? "Lección",
+        "category" => $datosLeccion['categoria'] ?? "General",
+        "pasos" => [
+            "explicacion" => [
+                "tipo" => "teoria",
+                "contenido" => $datosLeccion['descripcion'] ?? "Aprende los conceptos fundamentales de esta lección."
+            ],
+            "evaluacion" => [
+                "tipo" => "arrastrar",
+                "contenido" => "Demuestra lo que has aprendido. Identifica los conceptos correctos.",
+                "elementos" => [
+                    ["texto" => "Concepto de " . ($datosLeccion['titulo'] ?? ''), "tipo" => "activo"],
+                    ["texto" => "Distractor o Diferente", "tipo" => "pasivo"]
+                ]
+            ]
+        ]
+    ];
+}
+
+$pasos = $contenidoLeccionActual['pasos'] ?? $contenidoLeccionActual['steps'] ?? [];
+foreach ($pasos as $k => &$p) {
+    $p['tipo'] = $p['tipo'] ?? $p['type'] ?? 'teoria';
+    if ($p['tipo'] === 'theory') $p['tipo'] = 'teoria';
+    if ($p['tipo'] === 'drag_drop') $p['tipo'] = 'arrastrar';
+    $p['contenido'] = $p['contenido'] ?? $p['content'] ?? '';
+    
+    if (isset($p['items'])) {
+        $p['elementos'] = [];
+        foreach ($p['items'] as $item) {
+            $p['elementos'][] = [
+                'texto' => $item['texto'] ?? $item['text'] ?? '',
+                'tipo' => $item['tipo'] ?? $item['type'] ?? ''
+            ];
+        }
+    }
+}
+$contenidoLeccionActual['pasos'] = $pasos;
+
+// Validar paso y asegurar que exista
+if (!isset($contenidoLeccionActual['pasos'][$clavePaso])) {
+    $pasosDisponibles = array_keys($contenidoLeccionActual['pasos']);
+    $clavePaso = !empty($pasosDisponibles) ? $pasosDisponibles[0] : null;
+}
+
+if (!$clavePaso) {
     header('Location: dashboard.php');
     exit;
 }
 
-$stepData = $currentLessonContent['steps'][$stepKey] ?? null;
-if (!$stepData) {
-    $stepKey  = 'enganche';
-    $stepData = $currentLessonContent['steps'][$stepKey];
-}
+$datosPaso = $contenidoLeccionActual['pasos'][$clavePaso];
 
-$stepOrder  = ['enganche', 'exploracion', 'explicacion', 'elaboracion', 'evaluacion'];
-$stepIndex  = array_search($stepKey, $stepOrder);
-$nextStepKey = ($stepIndex < count($stepOrder) - 1) ? $stepOrder[$stepIndex + 1] : null;
+$ordenPasos  = ['explicacion', 'evaluacion']; // Simplificado para que coincida con el JSON actual
+$indicePaso  = array_search($clavePaso, $ordenPasos);
+$siguienteClavePaso = ($indicePaso !== false && $indicePaso < count($ordenPasos) - 1) ? $ordenPasos[$indicePaso + 1] : null;
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($lessonData['title']); ?> - DebiHaby</title>
+    <title><?php echo htmlspecialchars($datosLeccion['titulo']); ?> - DebiHaby</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -74,24 +126,32 @@ $nextStepKey = ($stepIndex < count($stepOrder) - 1) ? $stepOrder[$stepIndex + 1]
         #result-overlay { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); z-index: 10; flex-direction: column; align-items: center; justify-content: center; border-radius: 24px; text-align: center; }
     </style>
 </head>
-<body class="dashboard-body" style="display: block;">
+<body class="dashboard-body">
     <script>
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
+        const temaGuardado = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', temaGuardado);
     </script>
-    
-    <header class="dashboard-header lesson-container" style="margin-bottom: 0;">
-        <div class="header-welcome">
-            <a href="dashboard.php" style="text-decoration: none; color: var(--primary); font-weight: 600;"><i class="fas fa-arrow-left"></i> Volver al Dashboard</a>
-            <h1 style="margin-top: 1rem;"><?php echo htmlspecialchars($lessonData['title']); ?></h1>
-        </div>
-        <div class="header-stats">
-            <div class="stat-pill">
-                <span class="stat-icon"><i class="fas fa-layer-group"></i></span>
-                <span class="stat-value">Nivel: <?php echo htmlspecialchars($lessonData['category']); ?></span>
+
+    <?php include 'includes/sidebar.php'; ?>
+
+    <main class="main-content">
+        <header class="dashboard-header" style="margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="hamburger-btn" id="hamburger-btn" aria-label="Abrir menú">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-welcome">
+                    <a href="courses.php" style="text-decoration: none; color: var(--primary); font-weight: 600;"><i class="fas fa-arrow-left"></i> Volver a Mis Cursos</a>
+                    <h1 style="margin-top: 0.5rem; font-size: 1.5rem;"><?php echo htmlspecialchars($datosLeccion['titulo']); ?></h1>
+                </div>
             </div>
-        </div>
-    </header>
+            <div class="header-stats">
+                <div class="stat-pill">
+                    <span class="stat-icon"><i class="fas fa-layer-group"></i></span>
+                    <span class="stat-value">Categoría: <?php echo htmlspecialchars($datosLeccion['categoria'] ?? 'General'); ?></span>
+                </div>
+            </div>
+        </header>
 
     <div class="lesson-container">
         <div class="game-area">
@@ -109,56 +169,56 @@ $nextStepKey = ($stepIndex < count($stepOrder) - 1) ? $stepOrder[$stepIndex + 1]
             </div>
 
             <div class="game-header">
-                <h2><?php echo ucfirst($stepKey); ?>: <?php echo htmlspecialchars($lessonData['title']); ?></h2>
+                <h2><?php echo ucfirst($clavePaso); ?>: <?php echo htmlspecialchars($datosLeccion['titulo']); ?></h2>
                 <div class="step-indicator">
-                    Paso <?php echo $stepIndex + 1; ?> de 5
+                    Paso <?php echo ($indicePaso !== false) ? $indicePaso + 1 : '?'; ?> de <?php echo count($ordenPasos); ?>
                 </div>
             </div>
 
             <div class="step-content">
-                <?php if ($stepData['type'] == 'video'): ?>
+                <?php if ($datosPaso['tipo'] == 'video'): ?>
                     <div class="instruction-card">
                         <h3><i class="fas fa-play-circle" style="color: var(--primary);"></i> Introducción</h3>
-                        <p><?php echo nl2br(htmlspecialchars($stepData['content'])); ?></p>
+                        <p><?php echo nl2br(htmlspecialchars($datosPaso['contenido'])); ?></p>
                         <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 16px; margin-top: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                            <iframe src="<?php echo htmlspecialchars($stepData['video_url']); ?>" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
+                            <iframe src="<?php echo htmlspecialchars($datosPaso['video_url']); ?>" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
                         </div>
                     </div>
-                <?php elseif (in_array($stepData['type'], ['scenario', 'theory', 'practice'])): ?>
+                <?php elseif (in_array($datosPaso['tipo'], ['teoria', 'escenario', 'practica'])): ?>
                     <div class="instruction-card">
                         <?php 
-                        $iconClass = 'fa-book-open';
-                        if ($stepData['type'] == 'scenario') $iconClass = 'fa-compass';
-                        if ($stepData['type'] == 'theory') $iconClass = 'fa-lightbulb';
-                        if ($stepData['type'] == 'practice') $iconClass = 'fa-pencil-alt';
+                        $claseIcono = 'fa-book-open';
+                        if ($datosPaso['tipo'] == 'escenario') $claseIcono = 'fa-compass';
+                        if ($datosPaso['tipo'] == 'teoria') $claseIcono = 'fa-lightbulb';
+                        if ($datosPaso['tipo'] == 'practica') $claseIcono = 'fa-pencil-alt';
                         ?>
-                        <h3><i class="fas <?php echo $iconClass; ?>" style="color: var(--primary);"></i> Concepto Clave</h3>
+                        <h3><i class="fas <?php echo $claseIcono; ?>" style="color: var(--primary);"></i> Concepto Clave</h3>
                         <?php 
-                        $formattedText = htmlspecialchars($stepData['content']);
-                        $formattedText = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $formattedText);
-                        echo '<p style="line-height: 1.8; font-size: 1.05rem;">' . nl2br($formattedText) . '</p>'; 
+                        $textoFormateado = htmlspecialchars($datosPaso['contenido']);
+                        $textoFormateado = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $textoFormateado);
+                        echo '<p style="line-height: 1.8; font-size: 1.05rem;">' . nl2br($textoFormateado) . '</p>'; 
                         ?>
                     </div>
-                <?php elseif ($stepData['type'] == 'drag_drop'): ?>
+                <?php elseif ($datosPaso['tipo'] == 'arrastrar'): ?>
                     <div class="instruction-card">
                         <h3><i class="fas fa-gamepad" style="color: var(--primary);"></i> Reto Interactivo</h3>
-                        <p><?php echo htmlspecialchars($stepData['content']); ?></p>
+                        <p><?php echo htmlspecialchars($datosPaso['contenido']); ?></p>
                         <div class="drag-drop-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
                             <div class="elements-grid" style="grid-template-columns: 1fr;">
                                 <h4 style="margin-bottom: 1rem; color: var(--dark-light);">Elementos:</h4>
                                 <?php 
-                                $shuffledItems = $stepData['items'];
-                                shuffle($shuffledItems);
-                                foreach ($shuffledItems as $idx => $item): 
+                                $elementosMezclados = $datosPaso['elementos'];
+                                shuffle($elementosMezclados);
+                                foreach ($elementosMezclados as $idx => $elemento): 
                                 ?>
-                                    <div class="drag-item" draggable="true" id="item-<?php echo $idx; ?>" data-type="<?php echo htmlspecialchars($item['type']); ?>">
-                                        <?php echo htmlspecialchars($item['text']); ?>
+                                    <div class="drag-item" draggable="true" id="item-<?php echo $idx; ?>" data-tipo="<?php echo htmlspecialchars($elemento['tipo']); ?>">
+                                        <?php echo htmlspecialchars($elemento['texto']); ?>
                                     </div>
                                 <?php endforeach; ?>
                             </div>
                             <div class="drop-area-container">
-                                <?php $targetCount = count(array_filter($shuffledItems, fn($i) => $i['type'] === 'activo')); ?>
-                                <h4 style="margin-bottom: 1rem; color: var(--success);"><i class="fas fa-box-open"></i> Cofre de Activos: (<span id="correct-count">0</span> / <?php echo $targetCount; ?>)</h4>
+                                <?php $cantidadObjetivo = count(array_filter($elementosMezclados, fn($i) => $i['tipo'] === 'activo')); ?>
+                                <h4 style="margin-bottom: 1rem; color: var(--success);"><i class="fas fa-box-open"></i> Cofre de Activos: (<span id="correct-count">0</span> / <?php echo $cantidadObjetivo; ?>)</h4>
                                 <div class="drop-zone" id="assets-chest">
                                     <p class="drop-hint" style="color: #aaa; width: 100%; text-align: center; margin-top: 3rem;"><i class="fas fa-arrow-down"></i> Arrastra un activo aquí</p>
                                 </div>
@@ -169,8 +229,8 @@ $nextStepKey = ($stepIndex < count($stepOrder) - 1) ? $stepOrder[$stepIndex + 1]
             </div>
 
             <div class="game-footer">
-                <?php if ($nextStepKey): ?>
-                    <a href="lesson.php?id=<?php echo $lessonId; ?>&step=<?php echo $nextStepKey; ?>" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem; border-radius: 50px;">
+                <?php if ($siguienteClavePaso): ?>
+                    <a href="lesson.php?id=<?php echo $idLeccion; ?>&paso=<?php echo $siguienteClavePaso; ?>" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem; border-radius: 50px;">
                         Siguiente Paso <i class="fas fa-arrow-right" style="margin-left: 0.5rem;"></i>
                     </a>
                 <?php else: ?>
@@ -183,50 +243,50 @@ $nextStepKey = ($stepIndex < count($stepOrder) - 1) ? $stepOrder[$stepIndex + 1]
     </div>
 
     <script>
-        const dragItems = document.querySelectorAll('.drag-item');
-        const dropZone = document.getElementById('assets-chest');
-        const countSpan = document.getElementById('correct-count');
-        const successOverlay = document.getElementById('result-overlay');
-        const finishBtn = document.getElementById('finish-btn');
+        const itemsArrastrables = document.querySelectorAll('.drag-item');
+        const zonaSoltar = document.getElementById('assets-chest');
+        const spanContador = document.getElementById('correct-count');
+        const overlayExito = document.getElementById('result-overlay');
+        const botonFinalizar = document.getElementById('finish-btn');
         
-        let correctCount = 0;
-        const totalNeeded = Array.from(dragItems).filter(i => i.dataset.type === 'activo').length;
+        let contadorCorrectos = 0;
+        const totalNecesario = Array.from(itemsArrastrables).filter(i => i.dataset.tipo === 'activo').length;
 
-        dragItems.forEach(item => {
+        itemsArrastrables.forEach(item => {
             item.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('type', item.dataset.type);
-                e.dataTransfer.setData('text', item.innerText);
+                e.dataTransfer.setData('tipo', item.dataset.tipo);
+                e.dataTransfer.setData('texto', item.innerText);
                 item.style.opacity = '0.5';
             });
             item.addEventListener('dragend', () => item.style.opacity = '1');
         });
 
-        dropZone.addEventListener('dragover', (e) => {
+        zonaSoltar.addEventListener('dragover', (e) => {
             e.preventDefault();
-            dropZone.classList.add('active');
+            zonaSoltar.classList.add('active');
         });
 
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('active'));
+        zonaSoltar.addEventListener('dragleave', () => zonaSoltar.classList.remove('active'));
 
-        dropZone.addEventListener('drop', (e) => {
+        zonaSoltar.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropZone.classList.remove('active');
-            const type = e.dataTransfer.getData('type');
-            const text = e.dataTransfer.getData('text');
+            zonaSoltar.classList.remove('active');
+            const tipo = e.dataTransfer.getData('tipo');
+            const texto = e.dataTransfer.getData('texto');
 
-            if (type === 'activo') {
-                const alreadyAdded = Array.from(dropZone.children).some(c => c.innerText === text);
-                if (!alreadyAdded) {
+            if (tipo === 'activo') {
+                const yaAgregado = Array.from(zonaSoltar.children).some(c => c.innerText === texto);
+                if (!yaAgregado) {
                     const tag = document.createElement('div');
                     tag.className = 'tag-success';
-                    tag.innerText = text;
-                    dropZone.appendChild(tag);
-                    const original = Array.from(dragItems).find(i => i.innerText === text);
+                    tag.innerText = texto;
+                    zonaSoltar.appendChild(tag);
+                    const original = Array.from(itemsArrastrables).find(i => i.innerText === texto);
                     if (original) original.style.display = 'none';
-                    correctCount++;
-                    countSpan.innerText = correctCount;
-                    if (correctCount === totalNeeded) {
-                        setTimeout(() => successOverlay.style.display = 'flex', 500);
+                    contadorCorrectos++;
+                    spanContador.innerText = contadorCorrectos;
+                    if (contadorCorrectos === totalNecesario) {
+                        setTimeout(() => overlayExito.style.display = 'flex', 500);
                     }
                 }
             } else {
@@ -239,25 +299,26 @@ $nextStepKey = ($stepIndex < count($stepOrder) - 1) ? $stepOrder[$stepIndex + 1]
             }
         });
 
-        if (finishBtn) {
-            finishBtn.addEventListener('click', () => {
-                const formData = new FormData();
-                formData.append('lesson_id', <?php echo $lessonId; ?>);
-                fetch('controllers/progress_update.php', {
+        if (botonFinalizar) {
+            botonFinalizar.addEventListener('click', () => {
+                const datosForm = new FormData();
+                datosForm.append('id_leccion', <?php echo $idLeccion; ?>);
+                fetch('controllers/actualizar_progreso.php', {
                     method: 'POST',
-                    body: formData
+                    body: datosForm
                 })
                 .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.href = 'dashboard.php?completed=<?php echo $lessonId; ?>';
+                .then(dato => {
+                    if (dato.exito) {
+                        window.location.href = 'courses.php';
                     } else {
-                        Swal.fire('Error', data.message || 'Error al guardar progreso', 'error');
+                        Swal.fire('Error', dato.mensaje || 'Error al guardar progreso', 'error');
                     }
                 })
                 .catch(() => Swal.fire('Error', 'Error de conexión', 'error'));
             });
         }
     </script>
+    </main>
 </body>
 </html>

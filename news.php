@@ -29,10 +29,10 @@ $news = $stmt->fetchAll();
         <?php foreach ($news as $item): ?>
             <div class="news-card">
                 <div class="news-body">
-                    <span class="news-tag"><?php echo $item['category']; ?></span>
-                    <h3><?php echo htmlspecialchars($item['title']); ?></h3>
-                    <p><?php echo substr(htmlspecialchars($item['content']), 0, 150); ?>...</p>
-                    <small><?php echo date('d M, Y', strtotime($item['created_at'])); ?></small>
+                    <span class="news-tag"><?php echo htmlspecialchars($item['categoria'] ?? ''); ?></span>
+                    <h3><?php echo htmlspecialchars($item['titulo'] ?? ''); ?></h3>
+                    <p><?php echo substr(htmlspecialchars($item['contenido'] ?? ''), 0, 150); ?>...</p>
+                    <small><?php echo date('d M, Y', strtotime($item['creado_en'] ?? 'now')); ?></small>
                 </div>
             </div>
         <?php endforeach; ?>
