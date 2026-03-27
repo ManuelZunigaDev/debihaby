@@ -317,8 +317,21 @@ else: ?>
         endif; ?>
                             </div>
                         </div>
-                        <span class="badge" style="background: <?php echo htmlspecialchars($curso['color'] ?? '#FF9800'); ?>22; color: <?php echo htmlspecialchars($curso['color'] ?? '#FF9800'); ?>; margin-right: 0.5rem;">
-                            <?php echo htmlspecialchars($curso['categoria'] ?? ''); ?>
+                         <?php 
+                            $catText = $curso['categoria'] ?? '';
+                            $catLower = strtolower($catText);
+                            $badgeClass = "";
+                            $badgeStyle = "background: " . htmlspecialchars($curso['color'] ?? '#FF9800') . "15; color: " . htmlspecialchars($curso['color'] ?? '#FF9800') . ";";
+                            
+                            if (strpos($catLower, 'basi') !== false) $badgeClass = "badge-basico";
+                            else if (strpos($catLower, 'inter') !== false) $badgeClass = "badge-intermedio";
+                            else if (strpos($catLower, 'avanzado') !== false) $badgeClass = "badge-avanzado";
+
+                            // Si tiene clase de nivel, reseteamos el estilo inline para que mande el CSS
+                            if ($badgeClass) $badgeStyle = "";
+                        ?>
+                        <span class="badge <?php echo $badgeClass; ?>" style="<?php echo $badgeStyle; ?> margin-right: 0.5rem;">
+                            <?php echo htmlspecialchars($catText); ?>
                         </span>
                         <i class="fas fa-chevron-down module-toggle-icon"></i>
                     </div>
@@ -329,13 +342,13 @@ else: ?>
                         <?php
         else: ?>
                              <?php foreach ($leccionesCurso as $leccion):
-                                $claseEstado = $leccion['estado'];
-                                $levelClass = $leccion['nivel'] ?? 'basico';
-                                $isLocked = ($claseEstado === 'bloqueado');
-                                $claseIcono = $claseEstado === 'completado' ? 'fa-check' : ($claseEstado === 'disponible' ? 'fa-play' : 'fa-lock');
-                                $enlace = (!$isLocked) ? "lesson.php?id={$leccion['id']}" : 'javascript:void(0)';
-                            ?>
-                             <a href="<?php echo $enlace; ?>" class="lesson-row <?php echo $levelClass; ?> <?php echo $claseEstado; ?> <?php echo ($isLocked ? 'locked' : ''); ?>">
+                $claseEstado = $leccion['estado'];
+                $levelClass = $leccion['nivel'] ?? 'basico';
+                $isLocked = ($claseEstado === 'bloqueado');
+                $claseIcono = $claseEstado === 'completado' ? 'fa-check' : ($claseEstado === 'disponible' ? 'fa-play' : 'fa-lock');
+                $enlace = (!$isLocked) ? "lesson.php?id={$leccion['id']}" : 'javascript:void(0)';
+?>
+                             <a href="<?php echo $enlace; ?>" class="lesson-row <?php echo $levelClass; ?> <?php echo $claseEstado; ?> <?php echo($isLocked ? 'locked' : ''); ?>">
                                 <div class="lesson-status-icon">
                                     <i class="fas <?php echo $claseIcono; ?>"></i>
                                 </div>
@@ -349,7 +362,7 @@ else: ?>
                                 </span>
                             </a>
                             <?php
-                            endforeach; ?>
+            endforeach; ?>
                         <?php
         endif; ?>
                     </div>
@@ -410,4 +423,3 @@ endif; ?>
 </body>
 </html>
 
-/**ECHO  */

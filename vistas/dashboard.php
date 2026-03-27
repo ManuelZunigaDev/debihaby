@@ -199,11 +199,11 @@ endif; ?>
                 <div class="path-container" style="display: flex; flex-direction: column; gap: 2.5rem;">
                     <?php
 $categoriasInfo = [
-    'Activos' => ['icono' => 'fa-coins', 'color' => '#FF9800'],
-    'Pasivos' => ['icono' => 'fa-file-invoice-dollar', 'color' => '#f44336'],
-    'Capital' => ['icono' => 'fa-vault', 'color' => '#4CAF50'],
-    'Estados Financieros' => ['icono' => 'fa-chart-pie', 'color' => '#2196F3'],
-    'General' => ['icono' => 'fa-book', 'color' => '#9c27b0']
+    'Activos' => ['icono' => 'fa-coins', 'color' => '#3b82f6'],
+    'Pasivos' => ['icono' => 'fa-file-invoice-dollar', 'color' => '#10b981'],
+    'Capital' => ['icono' => 'fa-vault', 'color' => '#ef4444'],
+    'Estados Financieros' => ['icono' => 'fa-chart-pie', 'color' => '#8b5cf6'],
+    'General' => ['icono' => 'fa-book', 'color' => '#64748b']
 ];
 
 foreach ($categoriasInfo as $nomCat => $datosCat):
