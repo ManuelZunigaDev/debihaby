@@ -76,7 +76,7 @@ class ControladorCurso
     public function obtenerRutaAprendizaje($idUsuario)
     {
         $stmt = $this->pdo->prepare("
-            SELECT l.*, IFNULL(p.estado, 'bloqueado') as estado, IFNULL(p.puntaje, 0) as puntaje, p.completado_en
+            SELECT l.*, IFNULL(p.estado, 'bloqueado') as estado, IFNULL(p.puntaje, 0) as puntaje, p.completado_en, l.nivel
             FROM lecciones l
             LEFT JOIN progreso_usuario p ON l.id = p.leccion_id AND p.usuario_id = ?
             ORDER BY l.indice_orden ASC

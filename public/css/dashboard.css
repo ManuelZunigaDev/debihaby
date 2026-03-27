@@ -3,16 +3,57 @@
    =================================================== */
 
 :root {
+    /* Transitions & Spacing */
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --success: #10b981;
-    --success-light: #d1fae5;
-    --danger: #ef4444;
-    --danger-light: #fee2e2;
-    --info: #3b82f6;
-    --info-light: #dbeafe;
-    --warning: #f59e0b;
     --card-radius: 20px;
     --sidebar-width: 280px;
+
+    /* Bloom Taxonomy / Level Colors */
+    --level-basic: #3b82f6;      /* Blue - Remember/Understand */
+    --level-intermediate: #10b981; /* Green - Apply/Analyze */
+    --level-advanced: #ef4444;    /* Red - Evaluate/Create */
+
+    /* Semantic Colors */
+    --success: #10b981;
+    --success-light: rgba(16, 185, 129, 0.1);
+    --danger: #ef4444;
+    --danger-light: rgba(239, 68, 68, 0.1);
+    --info: #3b82f6;
+    --info-light: rgba(59, 130, 246, 0.1);
+    --warning: #f59e0b;
+    --warning-light: rgba(245, 158, 11, 0.1);
+
+    /* Elevation (Shadows) */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
+    --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.15);
+
+    /* Surface Colors (Light Mode) */
+    --bg-main: linear-gradient(135deg, #fef9f0 0%, #fef3e0 30%, #fff8f0 70%, #fefefe 100%);
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-sidebar: linear-gradient(180deg, #ffffff 0%, #fefdfb 100%);
+    --text-primary: #1a1a2e;
+    --text-secondary: #636e72;
+    --border-subtle: rgba(255, 152, 0, 0.1);
+    --input-bg: #ffffff;
+}
+
+[data-theme="dark"] {
+    /* Elevation (Dark Mode) */
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 16px 60px rgba(0, 0, 0, 0.6);
+    --shadow-hover: 0 20px 80px rgba(0, 0, 0, 0.7);
+
+    /* Surface Colors (Dark Mode) */
+    --bg-main: #0a0a0f;
+    --bg-card: rgba(18, 18, 28, 0.9);
+    --bg-sidebar: #0d0d14;
+    --text-primary: #efeff5;
+    --text-secondary: #a0a0b0;
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --input-bg: #161621;
 }
 
 /* ===== ANIMATED BACKGROUND ===== */
@@ -20,8 +61,9 @@
     display: flex;
     min-height: 100vh;
     margin: 0;
-    background: linear-gradient(135deg, #fef9f0 0%, #fef3e0 30%, #fff8f0 70%, #fefefe 100%);
+    background: var(--bg-main);
     background-attachment: fixed;
+    color: var(--text-primary);
 }
 
 .dashboard-body::before {
@@ -385,60 +427,26 @@ body {
 
 /* ===== PREMIUM CARD ===== */
 .card-premium {
-    background: rgba(255, 255, 255, 0.75);
+    background: var(--bg-card);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--card-radius);
     padding: 1.5rem;
-    box-shadow:
-        0 4px 6px rgba(0, 0, 0, 0.01),
-        0 10px 30px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-md);
     transition: var(--transition);
     position: relative;
     overflow: hidden;
 }
 
-.card-premium::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--gradient-primary, linear-gradient(135deg, #FFB300, #FF6F00));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
 .card-premium:hover {
-    transform: translateY(-4px);
-    box-shadow:
-        0 8px 16px rgba(0, 0, 0, 0.04),
-        0 20px 40px rgba(255, 152, 0, 0.08);
-    border-color: rgba(255, 152, 0, 0.15);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(255, 152, 0, 0.2);
 }
 
-.card-premium:hover::before {
-    opacity: 1;
-}
-
-.card-premium h2 {
-    font-size: 1.25rem;
-    margin-bottom: 0.3rem;
-    color: #1a1a2e;
-}
-
-.card-premium h3 {
-    font-size: 1.05rem;
-    margin-bottom: 0.4rem;
-    color: #1a1a2e;
-}
-
-.card-premium h4 {
-    font-size: 0.95rem;
-    margin-bottom: 0.4rem;
-    color: #1a1a2e;
+.card-premium h2, .card-premium h3, .card-premium h4 {
+    color: var(--text-primary);
 }
 
 /* ===== CURRENT LESSON HERO ===== */
@@ -602,30 +610,6 @@ body {
     letter-spacing: 0.3px;
 }
 
-/* ===== LEARNING PATH ===== */
-.learning-path {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    position: relative;
-    padding-left: 0.5rem;
-}
-
-.learning-path::before {
-    content: '';
-    position: absolute;
-    left: 2.3rem;
-    top: 2.5rem;
-    bottom: 2.5rem;
-    width: 3px;
-    background: linear-gradient(to bottom,
-            var(--success) 0%,
-            rgba(255, 152, 0, 0.4) 40%,
-            rgba(200, 200, 200, 0.3) 100%);
-    border-radius: 10px;
-    z-index: 1;
-}
-
 .path-node {
     display: flex;
     align-items: center;
@@ -633,42 +617,71 @@ body {
     position: relative;
     z-index: 2;
     transition: var(--transition);
-    padding: 0.7rem 0.8rem;
+    padding: 1rem;
     border-radius: 16px;
+    border: 1px solid transparent;
 }
 
 .path-node:hover {
-    background: rgba(255, 152, 0, 0.04);
+    background: var(--input-bg);
+    transform: translateX(5px) scale(1.02);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-subtle);
+}
+
+.path-node.locked {
+    opacity: 0.5;
+    filter: grayscale(0.8);
+    cursor: not-allowed;
+    background: transparent !important;
+}
+
+.path-node.locked .node-circle {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+    color: #4b5563;
+}
+
+/* Level Borders for Nodes */
+.path-node.basico {
+    border-left: 4px solid var(--level-basic);
+}
+
+.path-node.intermedio {
+    border-left: 4px solid var(--level-intermediate);
+}
+
+.path-node.avanzado {
+    border-left: 4px solid var(--level-advanced);
 }
 
 .node-circle {
-    width: 3.2rem;
-    height: 3.2rem;
-    min-width: 3.2rem;
-    background: white;
+    width: 3.5rem;
+    height: 3.5rem;
+    min-width: 3.5rem;
+    background: var(--input-bg);
     border: 3px solid #e0e0e0;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     transition: var(--transition);
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-sm);
 }
 
 .path-node.completed .node-circle {
     border-color: var(--success);
-    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    background: var(--success-light);
     color: var(--success);
     box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
 }
 
 .path-node.available .node-circle {
     border-color: #FF6F00;
-    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    background: var(--warning-light);
     color: #FF6F00;
     cursor: pointer;
-    animation: nodePulse 2.5s ease-in-out infinite;
     box-shadow: 0 4px 14px rgba(255, 111, 0, 0.2);
 }
 
@@ -828,36 +841,36 @@ body {
 }
 
 .activity-item:hover {
-    border-color: rgba(255, 152, 0, 0.12);
-    background: white;
-    transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-}
-
-.activity-info {
-    display: flex;
-    flex-direction: column;
+    background: var(--bg-card);
+    transform: scale(1.02);
+    box-shadow: var(--shadow-sm);
+    border-color: var(--border-subtle);
 }
 
 .activity-info strong {
-    font-size: 0.88rem;
-    color: #1a1a2e;
+    color: var(--text-primary);
+    font-size: 1rem;
 }
 
 .activity-info span {
-    font-size: 0.78rem;
-    color: #a0a0a0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
 }
 
 .activity-tag {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #FF6F00;
-    white-space: nowrap;
-    background: rgba(255, 111, 0, 0.08);
-    padding: 0.25rem 0.7rem;
+    margin-left: auto;
+    background: var(--warning-light);
+    color: var(--warning);
+    padding: 0.3rem 0.8rem;
     border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.85rem;
 }
+
+/* Ranking Specific Highlight */
+.activity-item:nth-child(1) { border-left: 4px solid #FFD700; } /* Gold */
+.activity-item:nth-child(2) { border-left: 4px solid #C0C0C0; } /* Silver */
+.activity-item:nth-child(3) { border-left: 4px solid #CD7F32; } /* Bronze */
 
 /* ===== STATS ===== */
 .stats-overview {

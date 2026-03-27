@@ -21,7 +21,7 @@ class ControladorDashboard {
         return [
             'nombre_completo' => $perfil['nombre_completo'] ?? '',
             'nombre_usuario'  => $perfil['nombre_usuario'] ?? '',
-            'avatar'          => $perfil['avatar'] ?? '../public/assets/debi_pet.png',
+            'avatar'          => (!empty($perfil['avatar'])) ? $perfil['avatar'] : '../public/assets/debi_pet.png',
             'puntos'          => $perfil['puntos'] ?? 0,
             'nivel'           => $perfil['nivel'] ?? 1,
             'racha'           => $perfil['racha'] ?? 0,
@@ -77,7 +77,8 @@ class ControladorDashboard {
                 'estado' => $leccion['estado'],
                 'puntaje' => $leccion['puntaje'] ?? 0,
                 'completado_en' => $leccion['completado_en'] ?? null,
-                'clase_icono' => $leccion['clase_icono'] ?? null
+                'clase_icono' => $leccion['clase_icono'] ?? null,
+                'nivel' => $leccion['nivel'] ?? 'basico'
             ];
         }
         return $rutaProcesada;

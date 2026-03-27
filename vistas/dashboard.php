@@ -208,7 +208,8 @@ $categoriasInfo = [
 
 foreach ($categoriasInfo as $nomCat => $datosCat):
     $leccionesCat = array_filter($rutaAprendizaje, function ($l) use ($nomCat) {
-        return $l['categoria'] === $nomCat; });
+        return $l['categoria'] === $nomCat;
+    });
     if (empty($leccionesCat))
         continue;
 ?>
@@ -222,34 +223,41 @@ foreach ($categoriasInfo as $nomCat => $datosCat):
                                     <p style="margin: 0; color: #636e72; font-size: 0.9rem;"><?php echo count($leccionesCat); ?> Lecciones disponibles</p>
                                 </div>
                             </div>
-                            
-                            <div class="learning-path" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                                <?php foreach ($leccionesCat as $leccion): ?>
-                                    <div class="path-node <?php echo $leccion['estado']; ?>" 
-                                         style="margin: 0; width: 100%; cursor: pointer;"
-                                         onclick="if('<?php echo $leccion['estado']; ?>' !== 'bloqueado') window.location.href='lesson.php?id=<?php echo $leccion['id']; ?>'">
-                                        <div class="node-circle" style="flex-shrink: 0;">
-                                            <?php if ($leccion['estado'] === 'completado'): ?><i class="fas fa-check-circle"></i>
-                                            <?php
-        elseif ($leccion['estado'] === 'disponible'): ?><i class="fas <?php echo $leccion['clase_icono'] ?: 'fa-play'; ?>"></i>
-                                            <?php
-        else: ?><i class="fas fa-lock"></i><?php
-        endif; ?>
+                                  <div class="learning-path" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                                    <?php foreach ($leccionesCat as $leccion): 
+                                        $isLocked = ($leccion['estado'] === 'bloqueado');
+                                        $levelClass = $leccion['nivel'] ?? 'basico';
+                                    ?>
+                                        <div class="path-node <?php echo $levelClass; ?> <?php echo $leccion['estado']; ?>" 
+                                             style="margin: 0; width: 100%; cursor: pointer;"
+                                             onclick="if('<?php echo $leccion['estado']; ?>' !== 'bloqueado') window.location.href='lesson.php?id=<?php echo $leccion['id']; ?>'">
+                                            <div class="node-circle" style="flex-shrink: 0;">
+                                                <?php if ($leccion['estado'] === 'completado'): ?><i class="fas fa-check-circle"></i>
+                                                <?php
+                                                elseif ($leccion['estado'] === 'disponible'): ?><i class="fas <?php echo $leccion['clase_icono'] ?: 'fa-play'; ?>"></i>
+                                                <?php
+                                                else: ?><i class="fas fa-lock"></i><?php
+                                                endif; ?>
+                                            </div>
+                                            <div class="node-content">
+                                                <h3 style="font-size: 1.1rem;"><?php echo htmlspecialchars($leccion['titulo']); ?></h3>
+                                                <p style="font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
+                                                    <span style="color: var(--level-<?php echo $levelClass; ?>); font-weight: 700; text-transform: capitalize;">
+                                                        <?php echo $levelClass; ?>
+                                                    </span>
+                                                    • <?php echo $leccion['recompensa_xp']; ?> XP
+                                                </p>
+                                                <?php if ($leccion['estado'] === 'completado'): ?>
+                                                    <span class="score-tag">Nota: <?php echo $leccion['puntaje']; ?>%</span>
+                                                <?php
+                                                endif; ?>
+                                            </div>
                                         </div>
-                                        <div class="node-content">
-                                            <h3 style="font-size: 1.1rem;"><?php echo htmlspecialchars($leccion['titulo']); ?></h3>
-                                            <p style="font-size: 0.85rem;"><?php echo $leccion['recompensa_xp']; ?> XP</p>
-                                            <?php if ($leccion['estado'] === 'completado'): ?>
-                                                <span class="score-tag" style="display: inline-block; background: #E8F5E9; color: #2E7D32; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">Nota: <?php echo $leccion['puntaje']; ?>%</span>
-                                            <?php
-        endif; ?>
-                                        </div>
-                                    </div>
-                                <?php
-    endforeach; ?>
-                            </div>
-                        </div>
-                    <?php
+                                    <?php
+                                    endforeach; ?>
+                                </div>
+                    </div>
+                        <?php
 endforeach; ?>
                 </div>
             </div>
@@ -371,12 +379,14 @@ endif; ?>
                             <div class="activity-list mt-1">
                                 <?php foreach ($ranking as $idx => $r): ?>
                                     <div class="activity-item">
-                                        <div class="activity-info"><strong><?php echo($idx + 1); ?>. <?php echo htmlspecialchars($r['nombre_usuario']); ?></strong><span>Nivel <?php echo $r['nivel']; ?></span></div>
-                                        <span class="activity-tag"><?php echo number_format($r['puntos']); ?> pts</span>
+                                        <div class="activity-info">
+                                            <strong><?php echo($idx + 1); ?>. <?php echo htmlspecialchars($r['nombre_usuario']); ?></strong>
+                                            <span>Nivel <?php echo $r['nivel']; ?></span>
+                                        </div>
+                                        <span class="activity-tag"><?php echo number_format($r['puntos']); ?> XP</span>
                                     </div>
                                 <?php
-endforeach; ?>
-                            </div>
+                                endforeach; ?>
                         </div>
                     </div>
                 </div>
@@ -462,7 +472,6 @@ endif; ?>
             if (hash) switchTab(hash);
         });
     </script>
-    /**
-    ECHO */
+    
 </body>
 </html>

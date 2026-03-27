@@ -93,76 +93,95 @@ body.auth-body {
 
 /* Form Panel */
 .auth-form-panel { flex: 1.2; padding: 4rem 3rem; display: flex; align-items: center; justify-content: center; background: white; }
-.form-inner { width: 100%; max-width: 360px; }
+.form-inner { width: 100%; max-width: 380px; }
 
 .form-header { margin-bottom: 2.5rem; text-align: left; }
-.form-header h2 { font-family: 'Poppins', sans-serif; font-size: 2rem; font-weight: 600; color: #0f172a; margin-bottom: 0.5rem; }
-.form-header p { color: #64748b; font-size: 0.95rem; }
+.form-header h2 { font-family: 'Poppins', sans-serif; font-size: 2.25rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
+.form-header p { color: #475569; font-size: 1rem; }
 
-.premium-form { display: flex; flex-direction: column; gap: 1.25rem; }
+.premium-form { display: flex; flex-direction: column; gap: 1.5rem; }
 
-.input-group-premium label { display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem; }
+.input-group-premium label { display: block; font-size: 0.9rem; font-weight: 600; color: #1e293b; margin-bottom: 0.6rem; }
 
-.input-wrapper { position: relative; }
-.input-wrapper i.fa-user, .input-wrapper i.fa-lock { position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+.input-wrapper { position: relative; display: flex; align-items: center; }
+
+.input-wrapper i:not(.fa-eye):not(.fa-eye-slash) { 
+    position: absolute; 
+    left: 1.25rem; 
+    color: #94a3b8; 
+    font-size: 1.1rem;
+    pointer-events: none;
+    z-index: 2;
+}
 
 .input-wrapper input {
     width: 100%;
-    padding: 1rem 1.25rem 1rem 3.25rem;
-    border: 1px solid #cbd5e1;
-    border-radius: 12px;
+    padding: 1.1rem 1.25rem 1.1rem 3.5rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
     font-size: 1rem;
-    color: #334155;
-    transition: 0.2s ease;
-    background: #ffffff;
+    color: #0f172a;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #f8fafc;
 }
 
 .input-wrapper input:focus {
-    border-color: var(--p-orange);
-    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+    border-color: #FF9800;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.15);
     outline: none;
+}
+
+.input-wrapper input:focus + i {
+    color: #FF9800;
 }
 
 .toggle-password-v2 {
     position: absolute;
     right: 1.25rem;
-    top: 50%;
-    transform: translateY(-50%);
     background: none;
     border: none;
     color: #94a3b8;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    padding: 5px;
+    z-index: 2;
 }
 
+.toggle-password-v2:hover { color: #64748b; }
+
 .form-actions { display: flex; justify-content: flex-end; }
-.forgot-link { font-size: 0.85rem; color: var(--p-orange); text-decoration: none; font-weight: 500; }
+.forgot-link { font-size: 0.9rem; color: #FF9800; text-decoration: none; font-weight: 600; }
 .forgot-link:hover { text-decoration: underline; }
 
 .btn-premium-submit {
-    padding: 1rem;
+    padding: 1.1rem;
     background: #0f172a;
     color: white;
     border: none;
-    border-radius: 12px;
+    border-radius: 14px;
     font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: all 0.3s ease;
     margin-top: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
 }
 
 .btn-premium-submit:hover { 
     background: #1e293b;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(15, 23, 42, 0.3);
 }
 
-.form-footer { margin-top: 2rem; text-align: center; font-size: 0.9rem; color: #64748b; }
-.form-footer a { color: var(--p-orange); text-decoration: none; font-weight: 600; }
+.btn-premium-submit:active { transform: translateY(0); }
+
+.form-footer { margin-top: 2rem; text-align: center; font-size: 1rem; color: #475569; }
+.form-footer a { color: #FF9800; text-decoration: none; font-weight: 700; }
 .form-footer a:hover { text-decoration: underline; }
 
 /* Alerts */

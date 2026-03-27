@@ -328,17 +328,20 @@ else: ?>
                             <p style="color: var(--dark-light); text-align: center; padding: 1rem 0;">Sin lecciones disponibles.</p>
                         <?php
         else: ?>
-                            <?php foreach ($leccionesCurso as $leccion):
-                $claseEstado = $leccion['estado'];
-                $claseIcono = $claseEstado === 'completado' ? 'fa-check' : ($claseEstado === 'disponible' ? 'fa-play' : 'fa-lock');
-                $enlace = ($claseEstado !== 'bloqueado') ? "lesson.php?id={$leccion['id']}" : 'javascript:void(0)';
-?>
-                            <a href="<?php echo $enlace; ?>" class="lesson-row <?php echo $claseEstado; ?>">
+                             <?php foreach ($leccionesCurso as $leccion):
+                                $claseEstado = $leccion['estado'];
+                                $levelClass = $leccion['nivel'] ?? 'basico';
+                                $isLocked = ($claseEstado === 'bloqueado');
+                                $claseIcono = $claseEstado === 'completado' ? 'fa-check' : ($claseEstado === 'disponible' ? 'fa-play' : 'fa-lock');
+                                $enlace = (!$isLocked) ? "lesson.php?id={$leccion['id']}" : 'javascript:void(0)';
+                            ?>
+                             <a href="<?php echo $enlace; ?>" class="lesson-row <?php echo $levelClass; ?> <?php echo $claseEstado; ?> <?php echo ($isLocked ? 'locked' : ''); ?>">
                                 <div class="lesson-status-icon">
                                     <i class="fas <?php echo $claseIcono; ?>"></i>
                                 </div>
                                 <div class="lesson-info">
                                     <strong><?php echo htmlspecialchars($leccion['titulo']); ?></strong>
+                                    <span style="font-size: 0.75rem; color: var(--level-<?php echo $levelClass; ?>); font-weight: 700; text-transform: uppercase;"><?php echo $levelClass; ?></span>
                                     <span><?php echo htmlspecialchars($leccion['descripcion'] ?? ''); ?></span>
                                 </div>
                                 <span class="lesson-xp">
@@ -346,7 +349,7 @@ else: ?>
                                 </span>
                             </a>
                             <?php
-            endforeach; ?>
+                            endforeach; ?>
                         <?php
         endif; ?>
                     </div>
