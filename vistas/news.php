@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+require_once '../configuracion/config.php';
 
 $stmt = $pdo->query("SELECT * FROM news ORDER BY created_at DESC");
 $news = $stmt->fetchAll();
@@ -10,7 +10,7 @@ $news = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <title>Noticias y Actualizaciones - DebiHaby</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="../public/css/styles.css">
     <style>
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; padding: 2rem; max-width: 1200px; margin: 0 auto; }
         .news-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }

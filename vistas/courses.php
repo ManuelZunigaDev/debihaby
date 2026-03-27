@@ -7,10 +7,10 @@ session_start();
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 
-require_once 'includes/config.php';
-require_once 'includes/auth_check.php';
-require_once 'controllers/ControladorCurso.php';
-require_once 'controllers/ControladorUsuario.php';
+require_once '../configuracion/config.php';
+require_once '../configuracion/verificar_sesion.php';
+require_once '../controladores/ControladorCurso.php';
+require_once '../controladores/ControladorUsuario.php';
 
 protegerPagina();
 
@@ -32,11 +32,9 @@ $paginaActual = 'courses';
 $cursos = $controladorCurso->obtenerTodosLosCursos($idUsuario) ?? [];
 
 
-// Obtener ruta de aprendizaje
 $rutaAprendizaje = $controladorCurso->obtenerRutaAprendizaje($idUsuario) ?? [];
 
 
-// Agrupar lecciones por curso
 $leccionesPorCurso = [];
 
 foreach ($rutaAprendizaje as $leccion) {
@@ -51,13 +49,12 @@ foreach ($rutaAprendizaje as $leccion) {
 }
 
 
-// Progreso general
 
 $totalLecciones = count($rutaAprendizaje);
 
 $leccionesCompletadas = count(
-    array_filter($rutaAprendizaje, function($l) {
-        return $l['estado'] === 'completed';
+    array_filter($rutaAprendizaje, function ($l) {
+        return $l['estado'] === 'completado';
     })
 );
 
@@ -68,13 +65,12 @@ if ($totalLecciones > 0) {
 }
 
 
-// Siguiente lección disponible
 
 $siguienteLeccion = null;
 
 foreach ($rutaAprendizaje as $l) {
 
-    if ($l['estado'] === 'available') {
+    if ($l['estado'] === 'disponible') {
 
         $siguienteLeccion = $l;
         break;
@@ -83,7 +79,6 @@ foreach ($rutaAprendizaje as $l) {
 }
 
 
-// Rol del usuario
 
 $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
 
@@ -94,13 +89,12 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Cursos - DebiHaby</title>
-    <link rel="icon" href="assets/logo2.ico" type="image/x-icon">
-    <link rel="stylesheet" href="css/styles.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="css/dashboard.css?v=<?php echo time(); ?>">
+    <link rel="icon" href="../public/assets/logo2.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../public/css/styles.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../public/css/dashboard.css?v=<?php echo time(); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* ── Courses Page ── */
         .courses-hero {
             background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
             border: 1px solid #f1e8dc;
@@ -129,8 +123,6 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
             background: var(--gradient-primary, linear-gradient(90deg, #FF9800, #FF5722));
             border-radius: 99px;
         }
-
-        /* Module card */
         .module-card {
             background: #ffffff;
             border-radius: 20px;
@@ -178,7 +170,6 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
         .module-toggle-icon { color: #94a3b8; font-size: 0.85rem; transition: transform 0.25s; }
         .module-card.open .module-toggle-icon { transform: rotate(180deg); }
 
-        /* Lessons list */
         .lessons-list { display: none; padding: 0.75rem 1.75rem 1.25rem; }
         .module-card.open .lessons-list { display: block; }
 
@@ -203,8 +194,10 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
             display: flex; align-items: center; justify-content: center;
             font-size: 0.9rem; flex-shrink: 0;
         }
-        .lesson-row.completed .lesson-status-icon { background: #dcfce7; color: #16a34a; }
-        .lesson-row.available  .lesson-status-icon { background: #fff7ed; color: var(--primary, #FF9800); }
+        .lesson-row.completed .lesson-status-icon 
+        { background: #dcfce7; color: #16a34a; }
+        .lesson-row.available  .lesson-status-icon 
+        { background: #fff7ed; color: var(--primary, #FF9800); }
         .lesson-row.locked     .lesson-status-icon { background: #f1f5f9; color: #cbd5e1; }
 
         .lesson-info { flex: 1; }
@@ -228,7 +221,7 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
 </head>
 <body class="dashboard-body">
 
-    <?php include 'includes/sidebar.php'; ?>
+    <?php include '../configuracion/sidebar.php'; ?>
 
     <main class="main-content">
         <header class="dashboard-header">
@@ -259,7 +252,6 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
 
         <section class="dashboard-container">
 
-            <!-- Hero / progreso general -->
             <div class="courses-hero">
                 <div>
                     <h2><i class="fas fa-map-marked-alt" style="color: var(--primary);"></i> Ruta de Aprendizaje</h2>
@@ -273,7 +265,8 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
                         <a href="lesson.php?id=<?php echo $siguienteLeccion['id']; ?>" class="btn btn-primary" style="padding: 0.65rem 1.5rem;">
                             <i class="fas fa-play"></i> Continuar
                         </a>
-                    <?php endif; ?>
+                    <?php
+endif; ?>
                     <a href="dashboard.php" class="btn btn-secondary" style="padding: 0.65rem 1.25rem; border-color: var(--primary); color: var(--primary);">
                         <i class="fas fa-th-large"></i> Dashboard
                     </a>
@@ -285,19 +278,20 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
                     <i class="fas fa-graduation-cap" style="font-size: 3rem; color: var(--primary); display: block; margin-bottom: 1rem;"></i>
                     <p>No hay cursos disponibles aún.</p>
                 </div>
-            <?php else: ?>
+            <?php
+else: ?>
                 <?php foreach ($cursos as $curso):
-                    $idC      = $curso['id'];
-                    $leccionesCurso = $leccionesPorCurso[$idC] ?? [];
+        $idC = $curso['id'];
+        $leccionesCurso = $leccionesPorCurso[$idC] ?? [];
 
-                    $totalC = count($leccionesCurso);
-                    $completadasC  = count(array_filter($leccionesCurso, fn($l) => $l['estado'] === 'completado'));
-                    $porcentajeC   = ($totalC > 0) ? round(($completadasC / $totalC) * 100) : 0;
+        $totalC = count($leccionesCurso);
+        $completadasC = count(array_filter($leccionesCurso, fn($l) => $l['estado'] === 'completado'));
+        $porcentajeC = ($totalC > 0) ? round(($completadasC / $totalC) * 100) : 0;
 
-                    $tieneDisponibles = count(array_filter($leccionesCurso, fn($l) => $l['estado'] === 'disponible')) > 0;
-                    $todoListo      = ($totalC > 0 && $completadasC === $totalC);
-                    $estaAbierto       = $tieneDisponibles; // auto-open the active course
-                ?>
+        $tieneDisponibles = count(array_filter($leccionesCurso, fn($l) => $l['estado'] === 'disponible')) > 0;
+        $todoListo = ($totalC > 0 && $completadasC === $totalC);
+        $estaAbierto = $tieneDisponibles;
+?>
                 <div class="module-card <?php echo $estaAbierto ? 'open' : ''; ?>" id="module-<?php echo $idC; ?>">
                     <div class="module-header" onclick="toggleModule(<?php echo $idC; ?>)">
                         <div class="module-icon" style="background: <?php echo htmlspecialchars($curso['color'] ?? '#FF9800'); ?>;">
@@ -313,11 +307,14 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
                                 <span class="module-progress-text"><?php echo $completadasC; ?>/<?php echo $totalC; ?> lecciones</span>
                                 <?php if ($todoListo): ?>
                                     <span style="font-size: 0.78rem; background: #dcfce7; color: #16a34a; padding: 0.15rem 0.6rem; border-radius: 99px; font-weight: 600;">✓ Completado</span>
-                                <?php elseif ($tieneDisponibles): ?>
+                                <?php
+        elseif ($tieneDisponibles): ?>
                                     <span style="font-size: 0.78rem; background: #fff7ed; color: var(--primary); padding: 0.15rem 0.6rem; border-radius: 99px; font-weight: 600;">En progreso</span>
-                                <?php elseif ($completadasC === 0): ?>
+                                <?php
+        elseif ($completadasC === 0): ?>
                                     <span style="font-size: 0.78rem; background: #f1f5f9; color: #94a3b8; padding: 0.15rem 0.6rem; border-radius: 99px;">Bloqueado</span>
-                                <?php endif; ?>
+                                <?php
+        endif; ?>
                             </div>
                         </div>
                         <span class="badge" style="background: <?php echo htmlspecialchars($curso['color'] ?? '#FF9800'); ?>22; color: <?php echo htmlspecialchars($curso['color'] ?? '#FF9800'); ?>; margin-right: 0.5rem;">
@@ -329,12 +326,13 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
                     <div class="lessons-list">
                         <?php if (empty($leccionesCurso)): ?>
                             <p style="color: var(--dark-light); text-align: center; padding: 1rem 0;">Sin lecciones disponibles.</p>
-                        <?php else: ?>
+                        <?php
+        else: ?>
                             <?php foreach ($leccionesCurso as $leccion):
-                                $claseEstado = $leccion['estado'];
-                                $claseIcono   = $claseEstado === 'completado' ? 'fa-check' : ($claseEstado === 'disponible' ? 'fa-play' : 'fa-lock');
-                                $enlace        = ($claseEstado !== 'bloqueado') ? "lesson.php?id={$leccion['id']}" : 'javascript:void(0)';
-                            ?>
+                $claseEstado = $leccion['estado'];
+                $claseIcono = $claseEstado === 'completado' ? 'fa-check' : ($claseEstado === 'disponible' ? 'fa-play' : 'fa-lock');
+                $enlace = ($claseEstado !== 'bloqueado') ? "lesson.php?id={$leccion['id']}" : 'javascript:void(0)';
+?>
                             <a href="<?php echo $enlace; ?>" class="lesson-row <?php echo $claseEstado; ?>">
                                 <div class="lesson-status-icon">
                                     <i class="fas <?php echo $claseIcono; ?>"></i>
@@ -347,18 +345,21 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
                                     <?php echo $claseEstado === 'completado' ? '+' . $leccion['recompensa_xp'] . ' XP ✓' : $leccion['recompensa_xp'] . ' XP'; ?>
                                 </span>
                             </a>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                            <?php
+            endforeach; ?>
+                        <?php
+        endif; ?>
                     </div>
                 </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+                <?php
+    endforeach; ?>
+            <?php
+endif; ?>
 
         </section>
     </main>
 
     <script>
-        // Theme
         const htmlRoot = document.documentElement;
         const savedTheme = localStorage.getItem('theme') || 'light';
         htmlRoot.setAttribute('data-theme', savedTheme);
@@ -376,22 +377,19 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
             });
         }
 
-        // Module accordion
         function toggleModule(courseId) {
             const card = document.getElementById('module-' + courseId);
             if (card) card.classList.toggle('open');
         }
 
-        // switchTab handler for standalone courses.php
         function switchTab(tabId) {
             console.log('switchTab called in courses.php for:', tabId);
             if (tabId === 'courses') {
-                return; // already here
+                return; 
             }
             window.location.href = 'dashboard.php#' + tabId;
         }
 
-        // Mobile sidebar
         const hamburgerBtn = document.getElementById('hamburger-btn');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
@@ -408,3 +406,5 @@ $rolUsuario = $_SESSION['rol_usuario'] ?? 'estudiante';
     </script>
 </body>
 </html>
+
+/**ECHO  */

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+require_once '../configuracion/config.php';
 
 // Redirigir si ya ha iniciado sesión
 if (isset($_SESSION['id_usuario'])) {
@@ -46,8 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/styles.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="css/login-register.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../public/css/styles.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../public/css/login-register.css?v=<?php echo time(); ?>">
 </head>
 <body class="auth-body">
     <div class="auth-container">
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="auth-visual-panel">
                 <div class="visual-content">
                     <div class="logo-wrapper">
-                        <img src="assets/logo.png" alt="DebiHaby Logo" class="floating-logo">
+                        <img src="../public/assets/logo.png" alt="DebiHaby Logo" class="floating-logo">
                     </div>
                     <h1 class="premium-title">DebiHaby</h1>
                     <p class="premium-subtitle">Domina la contabilidad con una experiencia gamificada única.</p>

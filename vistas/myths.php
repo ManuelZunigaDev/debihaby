@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+require_once '../configuracion/config.php';
 
 $myths = [
     [
@@ -20,7 +20,7 @@ $myths = [
 <head>
     <meta charset="UTF-8">
     <title>Mitos y Realidades - DebiHaby</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="../public/css/styles.css">
     <style>
         .myth-container { max-width: 800px; margin: 3rem auto; }
         .myth-card { perspective: 1000px; height: 300px; margin-bottom: 2rem; cursor: pointer; }

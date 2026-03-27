@@ -1,9 +1,9 @@
 <?php
 session_start();
-require_once 'includes/config.php';
-require_once 'includes/auth_check.php';
-require_once 'controllers/ControladorCurso.php';
-require_once 'controllers/ControladorUsuario.php';
+require_once '../configuracion/config.php';
+require_once '../configuracion/verificar_sesion.php';
+require_once '../controladores/ControladorCurso.php';
+require_once '../controladores/ControladorUsuario.php';
 
 // Proteger la página
 protegerPagina();
@@ -39,7 +39,7 @@ if (!$datosLeccion) {
     exit;
 }
 
-$archivoContenido = 'db/lessons_content.json';
+$archivoContenido = '../db/lessons_content.json';
 $todoElContenido = json_decode(file_get_contents($archivoContenido), true);
 $contenidoLeccionActual = $todoElContenido[$idLeccion] ?? null;
 
@@ -64,22 +64,10 @@ if (!$contenidoLeccionActual) {
     ];
 }
 
-$pasos = $contenidoLeccionActual['pasos'] ?? $contenidoLeccionActual['steps'] ?? [];
+$pasos = $contenidoLeccionActual['pasos'] ?? [];
 foreach ($pasos as $k => &$p) {
-    $p['tipo'] = $p['tipo'] ?? $p['type'] ?? 'teoria';
-    if ($p['tipo'] === 'theory') $p['tipo'] = 'teoria';
-    if ($p['tipo'] === 'drag_drop') $p['tipo'] = 'arrastrar';
-    $p['contenido'] = $p['contenido'] ?? $p['content'] ?? '';
-    
-    if (isset($p['items'])) {
-        $p['elementos'] = [];
-        foreach ($p['items'] as $item) {
-            $p['elementos'][] = [
-                'texto' => $item['texto'] ?? $item['text'] ?? '',
-                'tipo' => $item['tipo'] ?? $item['type'] ?? ''
-            ];
-        }
-    }
+    if (!isset($p['tipo'])) $p['tipo'] = 'teoria';
+    if (!isset($p['contenido'])) $p['contenido'] = '';
 }
 $contenidoLeccionActual['pasos'] = $pasos;
 
@@ -106,8 +94,8 @@ $siguienteClavePaso = ($indicePaso !== false && $indicePaso < count($ordenPasos)
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($datosLeccion['titulo']); ?> - DebiHaby</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="../public/css/styles.css">
+    <link rel="stylesheet" href="../public/css/dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -132,7 +120,7 @@ $siguienteClavePaso = ($indicePaso !== false && $indicePaso < count($ordenPasos)
         document.documentElement.setAttribute('data-theme', temaGuardado);
     </script>
 
-    <?php include 'includes/sidebar.php'; ?>
+    <?php include '../configuracion/sidebar.php'; ?>
 
     <main class="main-content">
         <header class="dashboard-header" style="margin-bottom: 0;">
@@ -302,7 +290,7 @@ $siguienteClavePaso = ($indicePaso !== false && $indicePaso < count($ordenPasos)
         const objGuardarProgreso = () => {
             const datosForm = new FormData();
             datosForm.append('id_leccion', <?php echo $idLeccion; ?>);
-            fetch('controllers/actualizar_progreso.php', {
+            fetch('../controladores/actualizar_progreso.php', {
                 method: 'POST',
                 body: datosForm
             })

@@ -1,14 +1,17 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../configuracion/config.php';
 
-class ControladorUsuario {
+class ControladorUsuario
+{
     private $pdo;
 
-    public function __construct($pdo) {
+    public function __construct($pdo)
+    {
         $this->pdo = $pdo;
     }
 
-    public function obtenerPerfilUsuario($idUsuario) {
+    public function obtenerPerfilUsuario($idUsuario)
+    {
         $stmt = $this->pdo->prepare("
             SELECT u.nombre_completo, u.avatar, u.rol, u.nivel_conocimiento, s.* 
             FROM usuarios u 
@@ -19,7 +22,8 @@ class ControladorUsuario {
         return $stmt->fetch();
     }
 
-    public function agregarXP($idUsuario, $cantidad) {
+    public function agregarXP($idUsuario, $cantidad)
+    {
         $stmt = $this->pdo->prepare("UPDATE estadisticas_usuario SET puntos = puntos + ? WHERE usuario_id = ?");
         $stmt->execute([$cantidad, $idUsuario]);
 
@@ -32,13 +36,15 @@ class ControladorUsuario {
         $stmt->execute([$nuevoNivel, $idUsuario]);
     }
 
-    public function actualizarRacha($idUsuario) {
+    public function actualizarRacha($idUsuario)
+    {
         $stmt = $this->pdo->prepare("SELECT ultima_actividad, racha FROM estadisticas_usuario WHERE usuario_id = ?");
         $stmt->execute([$idUsuario]);
         $datos = $stmt->fetch();
 
         $hoy = date('Y-m-d');
-        if ($datos['ultima_actividad'] === $hoy) return;
+        if ($datos['ultima_actividad'] === $hoy)
+            return;
 
         $ayer = date('Y-m-d', strtotime('-1 day'));
         $racha = ($datos['ultima_actividad'] === $ayer) ? $datos['racha'] + 1 : 1;
@@ -47,7 +53,8 @@ class ControladorUsuario {
         $stmt->execute([$racha, $hoy, $idUsuario]);
     }
 
-    public function obtenerRankingGlobal($limite = 10) {
+    public function obtenerRankingGlobal($limite = 10)
+    {
         $stmt = $this->pdo->prepare("
             SELECT u.nombre_usuario, s.puntos, s.nivel 
             FROM usuarios u 
@@ -60,10 +67,10 @@ class ControladorUsuario {
         return $stmt->fetchAll();
     }
 
-    public function obtenerActividadReciente($idUsuario) {
+    public function obtenerActividadReciente($idUsuario)
+    {
         $stmt = $this->pdo->prepare("
-            SELECT l.titulo, l.recompensa_xp, p.estado, p.completado_en
-            FROM progreso_usuario p
+            SELECT l.titulo, l.recompensa_xp, p.estado, p.completado_en FROM progreso_usuario p
             JOIN lecciones l ON p.leccion_id = l.id
             WHERE p.usuario_id = ?
             ORDER BY p.completado_en DESC
@@ -81,17 +88,20 @@ class ControladorUsuario {
                 $diff = $ahora->diff($dt);
                 if ($diff->days === 0) {
                     $fecha = 'Hoy';
-                } elseif ($diff->days === 1) {
+                }
+                elseif ($diff->days === 1) {
                     $fecha = 'Ayer';
-                } elseif ($diff->days < 7) {
+                }
+                elseif ($diff->days < 7) {
                     $fecha = 'Hace ' . $diff->days . ' días';
-                } else {
+                }
+                else {
                     $fecha = $dt->format('d/m/Y');
                 }
             }
 
             $textoXP = $fila['estado'] === 'completado' ? '+' . $fila['recompensa_xp'] . ' XP' : 'En progreso';
-            
+
             $actividades[] = [
                 'tipo' => $fila['estado'] === 'completado' ? 'leccion_completada' : 'en_progreso',
                 'titulo' => $fila['titulo'],
@@ -111,7 +121,8 @@ class ControladorUsuario {
         return $actividades;
     }
 
-    public function obtenerTodosLosUsuarios() {
+    public function obtenerTodosLosUsuarios()
+    {
         $stmt = $this->pdo->query("
             SELECT u.id, u.nombre_usuario, u.rol, u.correo, s.puntos, s.nivel 
             FROM usuarios u 

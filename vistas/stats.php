@@ -1,28 +1,28 @@
 <?php
 session_start();
-require_once 'includes/config.php';
-require_once 'controllers/DashboardController.php';
+require_once '../configuracion/config.php';
+require_once '../controladores/ControladorDashboard.php';
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['id_usuario'])) {
     header('Location: login.php');
     exit;
 }
 
-$userId = $_SESSION['user_id']; 
-$controller = new DashboardController($pdo);
-$studentStats = $controller->getStudentStats($userId);
+$idUsuario = $_SESSION['id_usuario']; 
+$controlador = new ControladorDashboard($pdo);
+$estadisticasEstudiante = $controlador->obtenerEstadisticasEstudiante($idUsuario);
 
-// Fetch top players for Ranking
+// Obtener mejores jugadores para el Ranking
 $stmt = $pdo->query("
-    SELECT u.username, s.points, s.level 
-    FROM users u 
-    JOIN user_stats s ON u.id = s.user_id 
-    ORDER BY s.points DESC 
+    SELECT u.nombre_usuario, s.puntos, s.nivel 
+    FROM usuarios u 
+    JOIN estadisticas_usuario s ON u.id = s.usuario_id 
+    ORDER BY s.puntos DESC 
     LIMIT 5
 ");
-$topPlayers = $stmt->fetchAll();
+$mejoresJugadores = $stmt->fetchAll();
 
-$currentPage = 'stats';
+$paginaActual = 'stats';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -30,14 +30,14 @@ $currentPage = 'stats';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estadísticas - DebiHaby</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="../public/css/styles.css">
+    <link rel="stylesheet" href="../public/css/dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body class="dashboard-body">
 
-    <?php include 'includes/sidebar.php'; ?>
+    <?php include '../configuracion/sidebar.php'; ?>
 
     <main class="main-content">
         <header class="dashboard-header">
@@ -74,10 +74,10 @@ $currentPage = 'stats';
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($topPlayers as $player): ?>
+                            <?php foreach ($mejoresJugadores as $jugador): ?>
                                 <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 10px;"><?php echo htmlspecialchars($player['username']); ?></td>
-                                    <td style="padding: 10px; font-weight: bold; color: var(--primary);"><?php echo number_format($player['points']); ?></td>
+                                    <td style="padding: 10px;"><?php echo htmlspecialchars($jugador['nombre_usuario']); ?></td>
+                                    <td style="padding: 10px; font-weight: bold; color: var(--primary);"><?php echo number_format($jugador['puntos']); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -86,6 +86,6 @@ $currentPage = 'stats';
             </div>
         </section>
     </main>
-    <script src="js/dashboard.js"></script>
+    <script src="../public/js/dashboard.js"></script>
 </body>
 </html>

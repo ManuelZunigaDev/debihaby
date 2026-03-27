@@ -1,20 +1,23 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../configuracion/config.php';
 
-class ControladorCurso {
+class ControladorCurso
+{
     private $pdo;
 
-    public function __construct($pdo) {
+    public function __construct($pdo)
+    {
         $this->pdo = $pdo;
     }
 
-    public function obtenerTodosLosCursos($idUsuario) {
+    public function obtenerTodosLosCursos($idUsuario)
+    {
         $stmt = $this->pdo->prepare("
             SELECT c.*, 
             (SELECT COUNT(*) FROM lecciones WHERE curso_id = c.id) as total_lecciones,
             (SELECT COUNT(*) FROM progreso_usuario up 
              JOIN lecciones l ON up.leccion_id = l.id 
-             WHERE l.curso_id = c.id AND up.usuario_id = ? AND up.estado = 'completed') as lecciones_completadas
+             WHERE l.curso_id = c.id AND up.usuario_id = ? AND up.estado = 'completado') as lecciones_completadas
             FROM cursos c
             ORDER BY c.indice_orden ASC
         ");
@@ -22,42 +25,58 @@ class ControladorCurso {
         return $stmt->fetchAll();
     }
 
-    public function obtenerLeccionActual($idUsuario) {
+    public function obtenerLeccionActual($idUsuario)
+    {
         $stmt = $this->pdo->prepare("
-            SELECT l.*, up.estado, up.puntaje 
+            SELECT l.*, up.estado 
             FROM lecciones l
-            LEFT JOIN progreso_usuario up ON l.id = up.leccion_id AND up.usuario_id = ?
-            WHERE up.estado = 'available' OR up.estado IS NULL
+            JOIN progreso_usuario up ON l.id = up.leccion_id 
+            WHERE up.usuario_id = ? AND up.estado = 'disponible'
             ORDER BY l.indice_orden ASC
             LIMIT 1
         ");
         $stmt->execute([$idUsuario]);
         $actual = $stmt->fetch();
-        
+
         if (!$actual) {
             $stmt = $this->pdo->prepare("
-                SELECT l.*, up.estado, up.puntaje 
+                SELECT l.*, 'disponible' as estado 
                 FROM lecciones l
                 LEFT JOIN progreso_usuario up ON l.id = up.leccion_id AND up.usuario_id = ?
-                WHERE up.estado = 'completed'
+                WHERE up.estado IS NULL
+                ORDER BY l.indice_orden ASC
+                LIMIT 1
+            ");
+            $stmt->execute([$idUsuario]);
+            $actual = $stmt->fetch();
+        }
+
+        if (!$actual) {
+            $stmt = $this->pdo->prepare("
+                SELECT l.*, up.estado
+                FROM lecciones l
+                JOIN progreso_usuario up ON l.id = up.leccion_id
+                WHERE up.usuario_id = ? AND up.estado = 'completado'
                 ORDER BY l.indice_orden DESC
                 LIMIT 1
             ");
             $stmt->execute([$idUsuario]);
             $actual = $stmt->fetch();
         }
-        
+
         return $actual;
     }
 
-    public function obtenerCursos() {
+    public function obtenerCursos()
+    {
         $stmt = $this->pdo->query("SELECT * FROM cursos ORDER BY indice_orden ASC");
         return $stmt->fetchAll();
     }
 
-    public function obtenerRutaAprendizaje($idUsuario) {
+    public function obtenerRutaAprendizaje($idUsuario)
+    {
         $stmt = $this->pdo->prepare("
-            SELECT l.*, IFNULL(p.estado, 'locked') as estado, IFNULL(p.puntaje, 0) as puntaje, p.completado_en
+            SELECT l.*, IFNULL(p.estado, 'bloqueado') as estado, IFNULL(p.puntaje, 0) as puntaje, p.completado_en
             FROM lecciones l
             LEFT JOIN progreso_usuario p ON l.id = p.leccion_id AND p.usuario_id = ?
             ORDER BY l.indice_orden ASC
@@ -66,29 +85,35 @@ class ControladorCurso {
         return $stmt->fetchAll();
     }
 
-    public function completarLeccion($idUsuario, $idLeccion) {
-        // Asegurarnos de desbloquear siempre la siguiente (por seguridad/reintentos)
+    public function completarLeccion($idUsuario, $idLeccion)
+    {
         $this->desbloquearSiguienteLeccion($idUsuario, $idLeccion);
 
-        $stmt = $this->pdo->prepare("SELECT usuario_id FROM progreso_usuario WHERE usuario_id = ? AND leccion_id = ? AND estado = 'completed'");
+        $stmt = $this->pdo->prepare("UPDATE estadisticas_usuario SET id_ultima_leccion = ? WHERE usuario_id = ?");
+        $stmt->execute([$idLeccion, $idUsuario]);
+
+        $stmt = $this->pdo->prepare("SELECT usuario_id FROM progreso_usuario WHERE usuario_id = ? AND leccion_id = ? AND estado = 'completado'");
         $stmt->execute([$idUsuario, $idLeccion]);
-        if ($stmt->fetch()) return false;
+        if ($stmt->fetch())
+            return false;
 
         $stmt = $this->pdo->prepare("
             INSERT INTO progreso_usuario (usuario_id, leccion_id, estado, completado_en) 
-            VALUES (?, ?, 'completed', NOW())
-            ON DUPLICATE KEY UPDATE estado = 'completed', completado_en = NOW()
+            VALUES (?, ?, 'completado', NOW())
+            ON DUPLICATE KEY UPDATE estado = 'completado', completado_en = NOW()
         ");
         $stmt->execute([$idUsuario, $idLeccion]);
 
         return true;
     }
 
-    private function desbloquearSiguienteLeccion($idUsuario, $idLeccionCompletada) {
+    private function desbloquearSiguienteLeccion($idUsuario, $idLeccionCompletada)
+    {
         $stmt = $this->pdo->prepare("SELECT indice_orden, curso_id FROM lecciones WHERE id = ?");
         $stmt->execute([$idLeccionCompletada]);
         $fila = $stmt->fetch();
-        if (!$fila) return;
+        if (!$fila)
+            return;
 
         $ordenActual = $fila['indice_orden'];
         $idCurso = $fila['curso_id'];
@@ -114,7 +139,7 @@ class ControladorCurso {
         }
 
         if ($idSiguienteLeccion) {
-            $stmt = $this->pdo->prepare("INSERT INTO progreso_usuario (usuario_id, leccion_id, estado) VALUES (?, ?, 'available') ON DUPLICATE KEY UPDATE estado = IF(estado='locked', 'available', estado)");
+            $stmt = $this->pdo->prepare("INSERT INTO progreso_usuario (usuario_id, leccion_id, estado) VALUES (?, ?, 'disponible') ON DUPLICATE KEY UPDATE estado = IF(estado='bloqueado', 'disponible', estado)");
             $stmt->execute([$idUsuario, $idSiguienteLeccion]);
         }
     }

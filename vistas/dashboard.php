@@ -1,84 +1,91 @@
 <?php
 session_start();
-require_once 'includes/config.php';
-require_once 'controllers/DashboardController.php';
 
-if (!isset($_SESSION['user_id'])) {
+/**
+ * ORQUESTADOR
+ */
+require_once '../configuracion/config.php';
+require_once '../controladores/ControladorDashboard.php';
+
+if (!isset($_SESSION['id_usuario'])) {
     header('Location: login.php');
     exit;
 }
 
-$userId = $_SESSION['user_id']; 
-$dashboardController = new DashboardController($pdo);
-$studentStats = $dashboardController->getStudentStats($userId);
+$idUsuario = $_SESSION['id_usuario'];
 
-if (!$studentStats) {
+$controladorDashboard = new ControladorDashboard($pdo);
+$estadisticasEstudiante = $controladorDashboard->obtenerEstadisticasEstudiante($idUsuario);
+
+if (!$estadisticasEstudiante) {
     session_destroy();
-    header('Location: login.php?error=expired');
+    header('Location: login.php?error=expirado');
     exit;
 }
 
-$learningPath = $dashboardController->getLearningPath($userId);
-$currentLesson = $dashboardController->getCurrentLesson($userId);
-$recentActivity = $dashboardController->getRecentActivity($userId);
+$rutaAprendizaje = $controladorDashboard->obtenerRutaAprendizaje($idUsuario);
+$leccionActual = $controladorDashboard->obtenerLeccionActual($idUsuario);
+$actividadReciente = $controladorDashboard->obtenerActividadReciente($idUsuario);
 
 try {
-    $stmt = $pdo->query("SELECT * FROM news ORDER BY created_at DESC LIMIT 5");
-    $allNews = $stmt->fetchAll();
-} catch (PDOException $e) {
-    $allNews = [];
+    $stmt = $pdo->query("SELECT * FROM noticias ORDER BY creado_en DESC LIMIT 5");
+    $todasLasNoticias = $stmt->fetchAll();
+}
+catch (PDOException $e) {
+    $todasLasNoticias = [];
 }
 
 try {
-    $stmt = $pdo->query("SELECT * FROM myths");
-    $allMyths = $stmt->fetchAll();
-} catch (PDOException $e) {
-    $allMyths = [];
+    $stmt = $pdo->query("SELECT * FROM mitos");
+    $todosLosMitos = $stmt->fetchAll();
+}
+catch (PDOException $e) {
+    $todosLosMitos = [];
 }
 
-if (empty($allMyths)) {
-    $allMyths = [
-        ['myth' => 'La contabilidad es solo matemáticas', 'reality' => 'Es lógica y organización', 'explanation' => 'Aunque usa números, se trata más de entender el flujo del dinero y la toma de decisiones.'],
-        ['myth' => 'Solo se usa en grandes empresas', 'reality' => 'Toda entidad la necesita', 'explanation' => 'Incluso tus finanzas personales o una tienda pequeña se benefician enormemente.']
+if (empty($todosLosMitos)) {
+    $todosLosMitos = [
+        ['mito' => 'La contabilidad es solo matemáticas', 'realidad' => 'Es lógica y organización', 'explicacion' => 'Aunque usa números, se trata más de entender el flujo del dinero y la toma de decisiones.'],
+        ['mito' => 'Solo se usa en grandes empresas', 'realidad' => 'Toda entidad la necesita', 'explicacion' => 'Incluso tus finanzas personales o una tienda pequeña se benefician enormemente.']
     ];
 }
 
-$stmt = $pdo->query("SELECT q.*, u.username FROM expert_questions q JOIN users u ON q.user_id = u.id WHERE q.status = 'answered' ORDER BY q.created_at DESC");
-$expertAnswers = $stmt->fetchAll();
+$stmt = $pdo->query("SELECT q.*, u.nombre_usuario FROM preguntas_expertos q JOIN usuarios u ON q.usuario_id = u.id WHERE q.estado = 'respondida' ORDER BY q.creado_en DESC");
+$respuestasExpertos = $stmt->fetchAll();
 
-$stmt = $pdo->query("SELECT u.username, s.points, s.level FROM users u JOIN user_stats s ON u.id = s.user_id ORDER BY s.points DESC LIMIT 10");
+$stmt = $pdo->query("SELECT u.nombre_usuario, s.puntos, s.nivel FROM usuarios u JOIN estadisticas_usuario s ON u.id = s.usuario_id ORDER BY s.puntos DESC LIMIT 10");
 $ranking = $stmt->fetchAll();
 
-$stmt = $pdo->prepare("SELECT knowledge_level, role FROM users WHERE id = ?");
-$stmt->execute([$userId]);
-$userData = $stmt->fetch();
-$needsDiagnosis = ($userData['knowledge_level'] == 'principiante' && !isset($_SESSION['diagnosis_completed']));
+$stmt = $pdo->prepare("SELECT nivel_conocimiento, rol FROM usuarios WHERE id = ?");
+$stmt->execute([$idUsuario]);
+$datosUsuario = $stmt->fetch();
+$necesitaDiagnostico = ($datosUsuario['nivel_conocimiento'] == 'principiante' && !isset($_SESSION['diagnostico_completado']));
 
-$totalLessons = count($learningPath);
-$completedLessons = count(array_filter($learningPath, function($lesson) {
-    return $lesson['status'] === 'completed';
+$totalLecciones = count($rutaAprendizaje);
+$leccionesCompletadas = count(array_filter($rutaAprendizaje, function ($l) {
+    return $l['estado'] === 'completado';
 }));
-$progressPercent = ($totalLessons > 0) ? round(($completedLessons / $totalLessons) * 100) : 0;
-$userRole = $userData['role'] ?? 'student';
+$porcentajeProgreso = ($totalLecciones > 0) ? round(($leccionesCompletadas / $totalLecciones) * 100) : 0;
+$rolUsuario = $datosUsuario['rol'] ?? 'estudiante';
 
-$lessonCompleted = false;
-if (isset($_GET['completed'])) {
-    $cId = (int)$_GET['completed'];
-    if ($dashboardController->completeLesson($userId, $cId)) {
-        $lessonCompleted = true;
-        $studentStats = $dashboardController->getStudentStats($userId);
+$leccionCompletadaExito = false;
+if (isset($_GET['completado'])) {
+    $idL = (int)$_GET['completado'];
+    if ($controladorDashboard->completarLeccion($idUsuario, $idL)) {
+        $leccionCompletadaExito = true;
+        $estadisticasEstudiante = $controladorDashboard->obtenerEstadisticasEstudiante($idUsuario);
     }
 }
 
-$allUsers = ($userRole === 'admin') ? $dashboardController->getUsersList() : [];
-$expertSuccess = isset($_GET['expert_success']);
-$diagnosisSuccess = isset($_GET['diagnosis']);
-$lockedAlert      = isset($_GET['locked']);
+$listaTodosLosUsuarios = ($rolUsuario === 'admin') ? $controladorDashboard->obtenerListaUsuarios() : [];
+$exitoExperto = isset($_GET['exito_experto']);
+$exitoDiagnostico = isset($_GET['diagnostico']);
+$alertaBloqueado = isset($_GET['bloqueado']);
 
-$avgScore = 0;
-$completedWithScore = array_filter($learningPath, fn($l) => $l['status'] === 'completed' && $l['score'] > 0);
-if (!empty($completedWithScore)) {
-    $avgScore = round(array_sum(array_column($completedWithScore, 'score')) / count($completedWithScore));
+$promedioPuntaje = 0;
+$completadasConPuntos = array_filter($rutaAprendizaje, fn($l) => $l['estado'] === 'completado' && $l['puntaje'] > 0);
+if (!empty($completadasConPuntos)) {
+    $promedioPuntaje = round(array_sum(array_column($completadasConPuntos, 'puntaje')) / count($completadasConPuntos));
 }
 ?>
 <!DOCTYPE html>
@@ -87,29 +94,23 @@ if (!empty($completedWithScore)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - DebiHaby</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="../public/css/styles.css">
+    <link rel="stylesheet" href="../public/css/dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="assets/logo2.ico" type="image/x-icon">
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-    </script>
+    <link rel="icon" href="../public/assets/logo2.ico" type="image/x-icon">
 </head>
 <body class="dashboard-body">
     <div class="toast-container" id="toast-container"></div>
 
-    <?php include 'includes/sidebar.php'; ?>
+    <?php include '../configuracion/sidebar.php'; ?>
 
     <main class="main-content">
         <header class="dashboard-header">
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <button class="hamburger-btn" id="hamburger-btn"><i class="fas fa-bars"></i></button>
                 <div class="header-welcome">
-                    <h1>Hola, <?php echo htmlspecialchars($studentStats['full_name']); ?> 👋</h1>
+                    <h1>Hola, <?php echo htmlspecialchars($estadisticasEstudiante['nombre_completo']); ?> 👋</h1>
                     <p>¡Es un gran día para aprender contabilidad!</p>
                 </div>
             </div>
@@ -120,37 +121,41 @@ if (!empty($completedWithScore)) {
                 </button>
                 <div class="stat-pill">
                     <span class="stat-icon"><i class="fas fa-fire" style="color: #FF5722;"></i></span>
-                    <span class="stat-value"><?php echo $studentStats['streak']; ?> días</span>
+                    <span class="stat-value"><?php echo $estadisticasEstudiante['racha']; ?> días</span>
                 </div>
                 <div class="stat-pill">
                     <span class="stat-icon"><i class="fas fa-gem" style="color: #03A9F4;"></i></span>
-                    <span class="stat-value"><?php echo number_format($studentStats['points']); ?></span>
+                    <span class="stat-value"><?php echo number_format($estadisticasEstudiante['puntos']); ?></span>
                 </div>
                 <div class="user-profile">
-                    <img src="<?php echo $studentStats['avatar'] ?: 'assets/debi_pet.png'; ?>" alt="Avatar" class="avatar-small">
+                    <img src="<?php echo $estadisticasEstudiante['avatar']; ?>" alt="Avatar" class="avatar-small">
                     <div class="user-info">
-                        <span class="level-badge">Nivel <?php echo $studentStats['level']; ?></span>
+                        <span class="level-badge">Nivel <?php echo $estadisticasEstudiante['nivel']; ?></span>
                     </div>
                 </div>
             </div>
         </header>
 
         <section class="dashboard-container">
-            <?php if ($lessonCompleted): ?>
-                <script>document.addEventListener('DOMContentLoaded', () => showToast('🎉 ¡Felicidades! Lección completada. Has ganado +100 XP.', 'success'));</script>
-            <?php endif; ?>
-            <?php if ($expertSuccess): ?>
-                <script>document.addEventListener('DOMContentLoaded', () => showToast('✅ ¡Pregunta enviada! Un experto te responderá pronto.', 'info'));</script>
-            <?php endif; ?>
-            <?php if ($diagnosisSuccess): ?>
-                <script>document.addEventListener('DOMContentLoaded', () => showToast('🎯 ¡Diagnóstico completado! Tu nivel ha sido actualizado.', 'success'));</script>
-            <?php endif; ?>
-            <?php if ($lockedAlert): ?>
-                <script>document.addEventListener('DOMContentLoaded', () => showToast('🔒 Esta lección aún está bloqueada.', 'warning'));</script>
-            <?php endif; ?>
+            <?php if ($leccionCompletadaExito): ?>
+                <script>document.addEventListener('DOMContentLoaded', () => showToast('¡Felicidades! Lección completada. Has ganado +100 XP.', 'success'));</script>
+            <?php
+endif; ?>
+            <?php if ($exitoExperto): ?>
+                <script>document.addEventListener('DOMContentLoaded', () => showToast('¡Pregunta enviada! Un experto te responderá pronto.', 'info'));</script>
+            <?php
+endif; ?>
+            <?php if ($exitoDiagnostico): ?>
+                <script>document.addEventListener('DOMContentLoaded', () => showToast('¡Diagnóstico completado! Tu nivel ha sido actualizado.', 'success'));</script>
+            <?php
+endif; ?>
+            <?php if ($alertaBloqueado): ?>
+                <script>document.addEventListener('DOMContentLoaded', () => showToast('Esta lección aún está bloqueada.', 'warning'));</script>
+            <?php
+endif; ?>
 
             <div id="tab-dashboard" class="tab-content active">
-                <?php if ($needsDiagnosis): ?>
+                <?php if ($necesitaDiagnostico): ?>
                     <div class="card-premium mission-card mb-2">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                             <div>
@@ -160,101 +165,115 @@ if (!empty($completedWithScore)) {
                             <a href="diagnosis.php" class="btn btn-primary">Iniciar Ahora</a>
                         </div>
                     </div>
-                <?php endif; ?>
+                <?php
+endif; ?>
 
                 <div class="dashboard-grid-main">
                     <div class="main-column" style="grid-column: 1 / -1;">
                         <div class="current-lesson-hero card-premium mb-2" style="min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
                             <div class="hero-label">CONTINUAR APRENDIENDO</div>
-                            <?php if ($currentLesson): ?>
-                                <h1 style="font-size: 2.5rem; margin-bottom: 1rem;"><?php echo htmlspecialchars($currentLesson['title']); ?></h1>
-                                <p style="font-size: 1.1rem; max-width: 600px;"><?php echo htmlspecialchars($currentLesson['description']); ?></p>
+                            <?php if ($leccionActual): ?>
+                                <h1 style="font-size: 2.5rem; margin-bottom: 1rem;"><?php echo htmlspecialchars($leccionActual['titulo']); ?></h1>
+                                <p style="font-size: 1.1rem; max-width: 600px;"><?php echo htmlspecialchars($leccionActual['descripcion']); ?></p>
                                 <div class="lesson-meta" style="margin: 1.5rem 0;">
-                                    <span><i class="fas fa-tags"></i> <?php echo htmlspecialchars($currentLesson['category']); ?></span>
-                                    <span><i class="fas fa-bolt"></i> +<?php echo $currentLesson['xp_reward']; ?> XP</span>
+                                    <span><i class="fas fa-tags"></i> <?php echo htmlspecialchars($leccionActual['categoria']); ?></span>
+                                    <span><i class="fas fa-bolt"></i> +<?php echo $leccionActual['recompensa_xp']; ?> XP</span>
                                 </div>
-                                <a href="lesson.php?id=<?php echo $currentLesson['id']; ?>" class="btn btn-primary btn-lg" style="align-self: flex-start; padding: 1rem 2rem; font-size: 1.1rem;">
+                                <a href="lesson.php?id=<?php echo $leccionActual['id']; ?>" class="btn btn-primary btn-lg" style="align-self: flex-start; padding: 1rem 2rem; font-size: 1.1rem;">
                                     <i class="fas fa-play"></i> Iniciar Lección
                                 </a>
-                            <?php else: ?>
+                            <?php
+else: ?>
                                 <h2>¡Has completado todas las lecciones!</h2>
                                 <p>Excelente trabajo. Mantente atento a nuevas actualizaciones o repasa tus cursos anteriores.</p>
                                 <a href="javascript:void(0)" onclick="switchTab('stats')" class="btn btn-secondary mt-1">Ver Mis Logros</a>
-                            <?php endif; ?>
+                            <?php
+endif; ?>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- New Mis Cursos Tab -->
+            <!-- Módulo Mis Cursos -->
             <div id="tab-courses" class="tab-content">
                 <div class="path-container" style="display: flex; flex-direction: column; gap: 2.5rem;">
-                    <?php 
-                    $categories = [
-                        'Activos' => ['icon' => 'fa-coins', 'color' => '#FF9800'],
-                        'Pasivos' => ['icon' => 'fa-file-invoice-dollar', 'color' => '#f44336'],
-                        'Capital' => ['icon' => 'fa-vault', 'color' => '#4CAF50'],
-                        'Estados Financieros' => ['icon' => 'fa-chart-pie', 'color' => '#2196F3'],
-                        'General' => ['icon' => 'fa-book', 'color' => '#9c27b0']
-                    ];
+                    <?php
+$categoriasInfo = [
+    'Activos' => ['icono' => 'fa-coins', 'color' => '#FF9800'],
+    'Pasivos' => ['icono' => 'fa-file-invoice-dollar', 'color' => '#f44336'],
+    'Capital' => ['icono' => 'fa-vault', 'color' => '#4CAF50'],
+    'Estados Financieros' => ['icono' => 'fa-chart-pie', 'color' => '#2196F3'],
+    'General' => ['icono' => 'fa-book', 'color' => '#9c27b0']
+];
 
-                    foreach ($categories as $catName => $catData): 
-                        $catLessons = array_filter($learningPath, function($l) use ($catName) { return $l['category'] === $catName; });
-                        if (empty($catLessons)) continue;
-                    ?>
+foreach ($categoriasInfo as $nomCat => $datosCat):
+    $leccionesCat = array_filter($rutaAprendizaje, function ($l) use ($nomCat) {
+        return $l['categoria'] === $nomCat; });
+    if (empty($leccionesCat))
+        continue;
+?>
                         <div class="course-module">
                             <div class="module-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 0.5rem;">
-                                <div class="module-icon" style="width: 50px; height: 50px; background: <?php echo $catData['color']; ?>20; color: <?php echo $catData['color']; ?>; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
-                                    <i class="fas <?php echo $catData['icon']; ?>"></i>
+                                <div class="module-icon" style="width: 50px; height: 50px; background: <?php echo $datosCat['color']; ?>20; color: <?php echo $datosCat['color']; ?>; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                    <i class="fas <?php echo $datosCat['icono']; ?>"></i>
                                 </div>
                                 <div>
-                                    <h2 style="margin: 0; font-size: 1.4rem; color: #1a1a2e;">Módulo: <?php echo $catName; ?></h2>
-                                    <p style="margin: 0; color: #636e72; font-size: 0.9rem;"><?php echo count($catLessons); ?> Lecciones disponibles</p>
+                                    <h2 style="margin: 0; font-size: 1.4rem; color: #1a1a2e;">Módulo: <?php echo $nomCat; ?></h2>
+                                    <p style="margin: 0; color: #636e72; font-size: 0.9rem;"><?php echo count($leccionesCat); ?> Lecciones disponibles</p>
                                 </div>
                             </div>
                             
                             <div class="learning-path" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                                <?php foreach ($catLessons as $lesson): ?>
-                                    <div class="path-node <?php echo $lesson['status']; ?>" 
+                                <?php foreach ($leccionesCat as $leccion): ?>
+                                    <div class="path-node <?php echo $leccion['estado']; ?>" 
                                          style="margin: 0; width: 100%; cursor: pointer;"
-                                         onclick="if('<?php echo $lesson['status']; ?>' !== 'locked') window.location.href='lesson.php?id=<?php echo $lesson['id']; ?>'">
+                                         onclick="if('<?php echo $leccion['estado']; ?>' !== 'bloqueado') window.location.href='lesson.php?id=<?php echo $leccion['id']; ?>'">
                                         <div class="node-circle" style="flex-shrink: 0;">
-                                            <?php if ($lesson['status'] === 'completed'): ?><i class="fas fa-check-circle"></i>
-                                            <?php elseif ($lesson['status'] === 'available'): ?><i class="fas <?php echo $lesson['icon_class'] ?: 'fa-play'; ?>"></i>
-                                            <?php else: ?><i class="fas fa-lock"></i><?php endif; ?>
+                                            <?php if ($leccion['estado'] === 'completado'): ?><i class="fas fa-check-circle"></i>
+                                            <?php
+        elseif ($leccion['estado'] === 'disponible'): ?><i class="fas <?php echo $leccion['clase_icono'] ?: 'fa-play'; ?>"></i>
+                                            <?php
+        else: ?><i class="fas fa-lock"></i><?php
+        endif; ?>
                                         </div>
                                         <div class="node-content">
-                                            <h3 style="font-size: 1.1rem;"><?php echo htmlspecialchars($lesson['title']); ?></h3>
-                                            <p style="font-size: 0.85rem;"><?php echo $lesson['xp_reward']; ?> XP</p>
-                                            <?php if ($lesson['status'] === 'completed'): ?>
-                                                <span class="score-tag" style="display: inline-block; background: #E8F5E9; color: #2E7D32; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">Nota: <?php echo $lesson['score']; ?>%</span>
-                                            <?php endif; ?>
+                                            <h3 style="font-size: 1.1rem;"><?php echo htmlspecialchars($leccion['titulo']); ?></h3>
+                                            <p style="font-size: 0.85rem;"><?php echo $leccion['recompensa_xp']; ?> XP</p>
+                                            <?php if ($leccion['estado'] === 'completado'): ?>
+                                                <span class="score-tag" style="display: inline-block; background: #E8F5E9; color: #2E7D32; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">Nota: <?php echo $leccion['puntaje']; ?>%</span>
+                                            <?php
+        endif; ?>
                                         </div>
                                     </div>
-                                <?php endforeach; ?>
+                                <?php
+    endforeach; ?>
                             </div>
                         </div>
-                    <?php endforeach; ?>
+                    <?php
+endforeach; ?>
                 </div>
             </div>
 
+            <!-- Noticias -->
             <div id="tab-news" class="tab-content">
                 <div class="card-premium">
                     <h2><i class="fas fa-newspaper"></i> Noticias Contables</h2>
                     <div class="news-list mt-2">
-                        <?php foreach($allNews as $news): ?>
+                        <?php foreach ($todasLasNoticias as $noticia): ?>
                             <div class="mini-course-item mb-1">
                                 <div>
-                                    <span class="badge"><?php echo htmlspecialchars($news['category']); ?></span>
-                                    <h4 style="margin-top:0.5rem;"><?php echo htmlspecialchars($news['title']); ?></h4>
-                                    <p style="color:var(--dark-light); font-size:0.9rem;"><?php echo htmlspecialchars($news['content']); ?></p>
+                                    <span class="badge"><?php echo htmlspecialchars($noticia['categoria']); ?></span>
+                                    <h4 style="margin-top:0.5rem;"><?php echo htmlspecialchars($noticia['titulo']); ?></h4>
+                                    <p style="color:var(--dark-light); font-size:0.9rem;"><?php echo htmlspecialchars($noticia['contenido']); ?></p>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
+                        <?php
+endforeach; ?>
                     </div>
                 </div>
             </div>
 
+            <!-- Expertos -->
             <div id="tab-experts" class="tab-content">
                 <div class="dashboard-grid-main">
                     <div class="main-column">
@@ -267,49 +286,57 @@ if (!empty($completedWithScore)) {
                         </div>
                         <div class="card-premium">
                             <h3><i class="fas fa-message"></i> Respuestas Recientes</h3>
-                            <?php foreach($expertAnswers as $q): ?>
+                            <?php foreach ($respuestasExpertos as $resp): ?>
                                 <div class="activity-item mt-1" style="flex-direction:column; align-items:flex-start;">
-                                    <p><strong><i class="fas fa-circle-question" style="color: var(--primary);"></i> <?php echo htmlspecialchars($q['question']); ?></strong></p>
-                                    <p style="color: var(--success); margin-top: 5px; font-size: 0.9rem;"><i class="fas fa-circle-check"></i> <?php echo htmlspecialchars($q['answer']); ?></p>
+                                    <p><strong><i class="fas fa-circle-question" style="color: var(--primary);"></i> <?php echo htmlspecialchars($resp['pregunta']); ?></strong></p>
+                                    <p style="color: var(--success); margin-top: 5px; font-size: 0.9rem;"><i class="fas fa-circle-check"></i> <?php echo htmlspecialchars($resp['respuesta']); ?></p>
                                 </div>
-                            <?php endforeach; ?>
+                            <?php
+endforeach; ?>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Mitos -->
             <div id="tab-myths" class="tab-content">
                 <div class="card-premium">
                     <h2 style="text-align: center;"><i class="fas fa-brain"></i> Mitos vs Realidades</h2>
                     <div class="dashboard-grid-main mt-2" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-                        <?php foreach($allMyths as $m): ?>
+                        <?php foreach ($todosLosMitos as $m): ?>
                             <div class="card-premium" style="border-left: 4px solid var(--primary);">
-                                <h4 style="color: var(--danger); font-size: 0.95rem;"><i class="fas fa-xmark-circle"></i> Mito: <?php echo htmlspecialchars($m['myth']); ?></h4>
-                                <p style="margin: 5px 0;"><strong style="color: var(--success);"><i class="fas fa-check-circle"></i> Realidad:</strong> <?php echo htmlspecialchars($m['reality']); ?></p>
-                                <?php if(!empty($m['explanation'])): ?><p style="font-size: 0.85rem; color: var(--dark-light);">💡 <?php echo htmlspecialchars($m['explanation']); ?></p><?php endif; ?>
+                                <h4 style="color: var(--danger); font-size: 0.95rem;"><i class="fas fa-xmark-circle"></i> Mito: <?php echo htmlspecialchars($m['mito']); ?></h4>
+                                <p style="margin: 5px 0;"><strong style="color: var(--success);"><i class="fas fa-check-circle"></i> Realidad:</strong> <?php echo htmlspecialchars($m['realidad']); ?></p>
+                                <?php if (!empty($m['explicacion'])): ?><p style="font-size: 0.85rem; color: var(--dark-light);">💡 <?php echo htmlspecialchars($m['explicacion']); ?></p><?php
+    endif; ?>
                             </div>
-                        <?php endforeach; ?>
+                        <?php
+endforeach; ?>
                     </div>
                 </div>
             </div>
 
+            <!-- Certificación -->
             <div id="tab-certification" class="tab-content">
                 <div class="card-premium text-center" style="max-width:600px; margin: 0 auto;">
                     <i class="fas fa-award" style="font-size:4rem; color:var(--primary); margin-bottom:1.5rem;"></i>
                     <h2>Tu Certificado</h2>
                     <p>Completa todos los módulos al 100% para obtenerlo.</p>
                     <div style="margin: 2rem 0;">
-                        <div style="font-size: 3rem; font-weight:700; color:var(--primary);"><?php echo $progressPercent; ?>%</div>
-                        <div class="progress-bar-container" style="max-width:400px; margin: 1rem auto; background:#eee;"><div class="progress-bar" style="width: <?php echo $progressPercent; ?>%; background:var(--gradient-primary);"></div></div>
+                        <div style="font-size: 3rem; font-weight:700; color:var(--primary);"><?php echo $porcentajeProgreso; ?>%</div>
+                        <div class="progress-bar-container" style="max-width:400px; margin: 1rem auto; background:#eee;"><div class="progress-bar" style="width: <?php echo $porcentajeProgreso; ?>%; background:var(--gradient-primary);"></div></div>
                     </div>
-                    <?php if($progressPercent >= 100): ?>
+                    <?php if ($porcentajeProgreso >= 100): ?>
                         <a href="generate_pdf.php" class="btn btn-primary"><i class="fas fa-download"></i> Descargar PDF</a>
-                    <?php else: ?>
+                    <?php
+else: ?>
                         <button class="btn btn-secondary" disabled style="opacity:0.6;"><i class="fas fa-lock"></i> No Disponible</button>
-                    <?php endif; ?>
+                    <?php
+endif; ?>
                 </div>
             </div>
 
+            <!-- Calculadoras -->
             <div id="tab-tools" class="tab-content">
                 <div class="card-premium" style="max-width:600px; margin:0 auto;">
                     <h3><i class="fas fa-calculator"></i> Calculadora de IVA</h3>
@@ -325,15 +352,16 @@ if (!empty($completedWithScore)) {
                 </div>
             </div>
 
+            <!-- Estadísticas -->
             <div id="tab-stats" class="tab-content">
                 <div class="dashboard-grid-main">
                     <div class="main-column">
                         <div class="card-premium">
                             <h3><i class="fas fa-chart-line"></i> Tu Desempeño</h3>
                             <div class="stats-overview mt-2">
-                                <div class="stat-box card-premium"><span>Lecciones</span><h2><?php echo $completedLessons; ?>/<?php echo $totalLessons; ?></h2></div>
-                                <div class="stat-box card-premium"><span>Puntos</span><h2><?php echo number_format($studentStats['points']); ?></h2></div>
-                                <div class="stat-box card-premium"><span>Nivel</span><h2><?php echo $studentStats['level']; ?></h2></div>
+                                <div class="stat-box card-premium"><span>Lecciones</span><h2><?php echo $leccionesCompletadas; ?>/<?php echo $totalLecciones; ?></h2></div>
+                                <div class="stat-box card-premium"><span>Puntos</span><h2><?php echo number_format($estadisticasEstudiante['puntos']); ?></h2></div>
+                                <div class="stat-box card-premium"><span>Nivel</span><h2><?php echo $estadisticasEstudiante['nivel']; ?></h2></div>
                             </div>
                         </div>
                     </div>
@@ -341,33 +369,36 @@ if (!empty($completedWithScore)) {
                         <div class="card-premium">
                             <h3><i class="fas fa-trophy"></i> Ranking Global</h3>
                             <div class="activity-list mt-1">
-                                <?php foreach($ranking as $idx => $r): ?>
+                                <?php foreach ($ranking as $idx => $r): ?>
                                     <div class="activity-item">
-                                        <div class="activity-info"><strong><?php echo ($idx+1); ?>. <?php echo htmlspecialchars($r['username']); ?></strong><span>Nivel <?php echo $r['level']; ?></span></div>
-                                        <span class="activity-tag"><?php echo number_format($r['points']); ?> pts</span>
+                                        <div class="activity-info"><strong><?php echo($idx + 1); ?>. <?php echo htmlspecialchars($r['nombre_usuario']); ?></strong><span>Nivel <?php echo $r['nivel']; ?></span></div>
+                                        <span class="activity-tag"><?php echo number_format($r['puntos']); ?> pts</span>
                                     </div>
-                                <?php endforeach; ?>
+                                <?php
+endforeach; ?>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <?php if($userRole === 'admin'): ?>
+            <?php if ($rolUsuario === 'admin'): ?>
             <div id="tab-admin" class="tab-content">
                 <div class="card-premium">
                     <h2><i class="fas fa-shield-halved"></i> Panel Admin</h2>
                     <table class="admin-table mt-1">
                         <thead><tr><th>ID</th><th>Usuario</th><th>Rol</th><th>Puntos</th></tr></thead>
                         <tbody>
-                            <?php foreach($allUsers as $u): ?>
-                                <tr><td>#<?php echo $u['id']; ?></td><td><?php echo htmlspecialchars($u['username']); ?></td><td><?php echo $u['role']; ?></td><td><?php echo number_format($u['points']); ?></td></tr>
-                            <?php endforeach; ?>
+                            <?php foreach ($listaTodosLosUsuarios as $u): ?>
+                                <tr><td>#<?php echo $u['id']; ?></td><td><?php echo htmlspecialchars($u['nombre_usuario']); ?></td><td><?php echo $u['rol']; ?></td><td><?php echo number_format($u['puntos']); ?></td></tr>
+                            <?php
+    endforeach; ?>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <?php endif; ?>
+            <?php
+endif; ?>
 
         </section>
     </main>
@@ -431,5 +462,7 @@ if (!empty($completedWithScore)) {
             if (hash) switchTab(hash);
         });
     </script>
+    /**
+    ECHO */
 </body>
 </html>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../includes/config.php';
+require_once '../configuracion/config.php';
 require_once 'ControladorCurso.php';
 require_once 'ControladorUsuario.php';
 

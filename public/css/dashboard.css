@@ -452,8 +452,15 @@ body {
 }
 
 @keyframes heroEntrance {
-    from { opacity: 0; transform: scale(0.98) translateY(10px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
+    from {
+        opacity: 0;
+        transform: scale(0.98) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 .hero-label {
@@ -499,6 +506,7 @@ body {
     padding: 0.1rem 0.6rem;
     border-radius: 4px;
 }
+
 .quick-tools {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1632,9 +1640,52 @@ hr {
     border-color: rgba(255, 152, 0, 0.6);
 }
 
-/* ===================================================
-   RESPONSIVE
-   =================================================== */
+/* ── Courses Page Specific ── */
+[data-theme="dark"] .courses-hero {
+    background: linear-gradient(135deg, #181109 0%, #12121e 100%) !important;
+    border-color: rgba(255, 152, 0, 0.1) !important;
+}
+
+[data-theme="dark"] .courses-hero h2 {
+    color: #eaeaf5;
+}
+
+[data-theme="dark"] .module-card {
+    background: #181825 !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="dark"] .module-header:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+
+[data-theme="dark"] .module-meta h3 {
+    color: #eaeaf5;
+}
+
+[data-theme="dark"] .lesson-row {
+    color: #a0a0b0 !important;
+}
+
+[data-theme="dark"] .lesson-row:hover {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+[data-theme="dark"] .lesson-row.locked {
+    opacity: 0.3 !important;
+}
+
+[data-theme="dark"] .lesson-info strong {
+    color: #eaeaf5;
+}
+
+[data-theme="dark"] .module-mini-bar {
+    background: #1c1c2e;
+}
+
+[data-theme="dark"] .overall-progress-bar {
+    background: #1c1c2e;
+}
 
 @media (max-width: 1024px) {
     .dashboard-grid-main {
@@ -1793,3 +1844,7 @@ hr {
     border-color: #3b82f6 !important;
     color: #3b82f6 !important;
 }
+
+/**
+
+ESTA REFACTORS CON IA ECHO/
