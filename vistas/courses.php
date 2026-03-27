@@ -341,7 +341,7 @@ else: ?>
                                 </div>
                                 <div class="lesson-info">
                                     <strong><?php echo htmlspecialchars($leccion['titulo']); ?></strong>
-                                    <span style="font-size: 0.75rem; color: var(--level-<?php echo $levelClass; ?>); font-weight: 700; text-transform: uppercase;"><?php echo $levelClass; ?></span>
+                                    <span class="badge badge-<?php echo $levelClass; ?>"><?php echo $levelClass; ?></span>
                                     <span><?php echo htmlspecialchars($leccion['descripcion'] ?? ''); ?></span>
                                 </div>
                                 <span class="lesson-xp">

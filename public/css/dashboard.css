@@ -9,9 +9,12 @@
     --sidebar-width: 280px;
 
     /* Bloom Taxonomy / Level Colors */
-    --level-basic: #3b82f6;      /* Blue - Remember/Understand */
-    --level-intermediate: #10b981; /* Green - Apply/Analyze */
-    --level-advanced: #ef4444;    /* Red - Evaluate/Create */
+    --level-basic: #3b82f6;      /* Blue - Básico */
+    --level-basic-light: rgba(59, 130, 246, 0.1);
+    --level-intermediate: #10b981; /* Green - Intermedio */
+    --level-intermediate-light: rgba(16, 185, 129, 0.1);
+    --level-advanced: #ef4444;    /* Red - Avanzado */
+    --level-advanced-light: rgba(239, 68, 68, 0.1);
 
     /* Semantic Colors */
     --success: #10b981;
@@ -940,15 +943,20 @@ body {
 }
 
 .badge {
-    background: var(--gradient-primary, linear-gradient(135deg, #FFB300, #FF6F00));
-    color: white;
-    padding: 3px 12px;
+    padding: 4px 12px;
     border-radius: 8px;
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.3px;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
+
+.badge-basico { background: var(--level-basic-light); color: var(--level-basic); border: 1px solid rgba(59, 130, 246, 0.2); }
+.badge-intermedio { background: var(--level-intermediate-light); color: var(--level-intermediate); border: 1px solid rgba(16, 185, 129, 0.2); }
+.badge-avanzado { background: var(--level-advanced-light); color: var(--level-advanced); border: 1px solid rgba(239, 68, 68, 0.2); }
 
 /* ===== LOGROS ===== */
 .logros-strip {

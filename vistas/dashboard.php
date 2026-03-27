@@ -128,7 +128,7 @@ if (!empty($completadasConPuntos)) {
                     <span class="stat-value"><?php echo number_format($estadisticasEstudiante['puntos']); ?></span>
                 </div>
                 <div class="user-profile">
-                    <img src="<?php echo $estadisticasEstudiante['avatar']; ?>" alt="Avatar" class="avatar-small">
+                    <img src="<?php echo $estadisticasEstudiante['avatar']; ?>" onerror="this.src='../public/assets/debi_pet.png'" alt="Avatar" class="avatar-small">
                     <div class="user-info">
                         <span class="level-badge">Nivel <?php echo $estadisticasEstudiante['nivel']; ?></span>
                     </div>
@@ -241,8 +241,8 @@ foreach ($categoriasInfo as $nomCat => $datosCat):
                                             </div>
                                             <div class="node-content">
                                                 <h3 style="font-size: 1.1rem;"><?php echo htmlspecialchars($leccion['titulo']); ?></h3>
-                                                <p style="font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
-                                                    <span style="color: var(--level-<?php echo $levelClass; ?>); font-weight: 700; text-transform: capitalize;">
+                                                <p style="font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem;">
+                                                    <span class="badge badge-<?php echo $levelClass; ?>">
                                                         <?php echo $levelClass; ?>
                                                     </span>
                                                     • <?php echo $leccion['recompensa_xp']; ?> XP
